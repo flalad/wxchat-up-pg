@@ -1,105 +1,142 @@
-# 微信文件传输助手 Web 应用
+# 🚀 微信文件传输助手 Web 应用
 
-基于 Cloudflare Workers/Pages 的微信文件传输助手 Web 应用，支持 **Workers** 和 **Pages** 两种部署方式，实现跨设备文件传输和消息同步功能。
+<div align="center">
 
-## 🚀 功能特性
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-green.svg)
+![Platform](https://img.shields.io/badge/platform-Cloudflare%20Workers%20%7C%20Pages-orange.svg)
+![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen.svg)
 
-- 📱 **跨设备同步**: 支持多设备间的消息和文件同步
-- 📄 **文件传输**: 支持各种格式文件的上传和下载（最大1GB）
-- 💬 **文本消息**: 发送和接收文本消息
-- 🖼️ **图片预览**: 自动显示图片文件预览
-- 📊 **消息历史**: 完整的消息历史记录
-- 🔄 **实时更新**: 自动刷新获取最新消息（5秒间隔）
+**基于 Cloudflare Workers/Pages 的现代化微信文件传输助手**
+
+支持跨设备文件传输、消息同步和专业级管理后台
+
+[🌟 在线演示](#) | [📖 快速开始](#-快速开始) | [🔧 部署指南](#-部署指南) | [📚 文档](#-文档)
+
+</div>
+
+---
+
+## ✨ 功能特性
+
+### 🎯 核心功能
+- 📱 **跨设备同步** - 支持多设备间的消息和文件实时同步
+- 📄 **文件传输** - 支持各种格式文件上传下载（最大1GB）
+- 💬 **文本消息** - 发送和接收文本消息，支持表情符号
+- 🖼️ **图片预览** - 自动显示图片文件预览和缩略图
+- 📊 **消息历史** - 完整的消息历史记录和搜索功能
+- 🔄 **实时更新** - 自动刷新获取最新消息（5秒间隔）
+
+### 🎨 用户界面
+- 🌈 **动态背景** - 浅色系粒子动画背景，告别单调白色
+- 💫 **现代化设计** - 玻璃态效果和流畅动画
+- 📱 **响应式布局** - 完美适配桌面端和移动端
+- 🎭 **主题适配** - 自动适配系统暗色/亮色主题
+- ⚡ **性能优化** - 智能动画控制和资源管理
+
+### 🔐 管理后台 2.0
+- 👤 **用户认证** - 完整的登录注册系统
+- 📊 **数据仪表板** - 实时统计和可视化图表
+- 💬 **信息管理** - 查看、搜索、删除用户消息
+- 📁 **文件管理** - 批量管理文件，支持下载和删除
+- 👥 **用户管理** - 管理用户账户、角色和权限
+- 📈 **统计分析** - 活动趋势和数据分布分析
+- 🎨 **现代化界面** - 专业级管理后台设计
 
 ## 🛠️ 技术栈
 
-- **前端**: 原生HTML + CSS + JavaScript（模块化设计）
-- **后端**: Hono (Cloudflare Workers) / Pages Functions
-- **数据库**: Cloudflare D1
-- **文件存储**: Cloudflare R2
-- **部署**: Cloudflare Workers / Pages (双模式支持)
+### 前端技术
+- **核心框架**: 原生 HTML5 + CSS3 + ES6+ JavaScript
+- **设计系统**: 模块化 CSS，玻璃态效果
+- **动画引擎**: CSS3 动画 + JavaScript 控制
+- **图表库**: Chart.js 数据可视化
+- **响应式**: 移动优先的响应式设计
+
+### 后端技术
+- **运行时**: Cloudflare Workers / Pages Functions
+- **框架**: Hono (轻量级 Web 框架)
+- **数据库**: Cloudflare D1 (SQLite)
+- **文件存储**: Cloudflare R2 (S3兼容)
+- **认证**: JWT + bcrypt 密码加密
+
+### 部署平台
+- **Workers 模式**: 全球边缘计算部署
+- **Pages 模式**: 静态站点 + 无服务器函数
+- **CDN**: Cloudflare 全球 CDN 加速
+- **域名**: 支持自定义域名绑定
 
 ## 📦 项目结构
 
-<details>
-<summary>🗂️ 点击展开完整项目结构</summary>
-
 ```
 📁 wxchat/
-├── 📄 README.md              # 📖 项目说明文档
-├── 📄 package.json           # 📦 项目配置和依赖
-├── 📄 wrangler.toml          # ⚙️ Cloudflare Workers 配置
-├── 📄 wrangler-pages.toml    # ⚙️ Cloudflare Pages 配置
-├── 📄 build.js               # 🔨 Workers 构建脚本
-├── 📄 build-pages.js         # 🔨 Pages 构建脚本
-├── 📄 PAGES_DEPLOYMENT.md    # 📖 Pages 部署指南
+├── 📄 README.md                    # 📖 项目说明文档
+├── 📄 package.json                 # 📦 项目配置和依赖
+├── 📄 wrangler.toml                # ⚙️ Workers 配置
+├── 📄 wrangler-pages.toml          # ⚙️ Pages 配置
+├── 📄 setup-database.js            # 🔧 一键数据库设置脚本
 │
-├── 📁 public/                # 🎨 前端静态资源
-│   ├── 📄 index.html         # 🏠 主页面入口
+├── 📁 database/                    # 🗄️ 数据库相关
+│   ├── 📄 schema.sql               # 🏗️ 基础数据库结构
+│   └── 📄 admin-schema.sql         # 🔐 管理后台数据库结构
+│
+├── 📁 public/                      # 🎨 前端资源
+│   ├── 📄 index.html               # 🏠 主应用页面
+│   ├── 📄 admin.html               # 🔐 管理后台页面
 │   │
-│   ├── 📁 css/               # 🎨 样式文件
-│   │   ├── 📄 reset.css      # 🔄 CSS重置样式
-│   │   ├── 📄 main.css       # 🎯 主要样式定义
-│   │   ├── 📄 components.css # 🧩 组件样式库
-│   │   └── 📄 responsive.css # 📱 响应式设计
+│   ├── 📁 css/                     # 🎨 样式文件
+│   │   ├── 📄 reset.css            # 🔄 CSS 重置
+│   │   ├── 📄 main.css             # 🎯 主应用样式
+│   │   ├── 📄 admin.css            # 🔐 管理后台样式
+│   │   ├── 📄 admin-enhanced.css   # ✨ 管理后台增强样式
+│   │   ├── 📄 animated-background.css # 🌈 动态背景样式
+│   │   ├── 📄 components.css       # 🧩 组件样式库
+│   │   └── 📄 responsive.css       # 📱 响应式样式
 │   │
-│   └── 📁 js/                # ⚡ JavaScript模块
-│       ├── 📄 config.js      # ⚙️ 应用配置中心
-│       ├── 📄 utils.js       # 🛠️ 工具函数库
-│       ├── 📄 api.js         # 🌐 API接口封装
-│       ├── 📄 ui.js          # 🎨 UI操作管理
-│       ├── 📄 fileUpload.js  # 📁 文件上传处理
-│       ├── 📄 messageHandler.js # 💬 消息处理逻辑
-│       └── 📄 app.js         # 🚀 应用程序入口
+│   └── 📁 js/                      # ⚡ JavaScript 模块
+│       ├── 📄 app.js               # 🚀 主应用入口
+│       ├── 📄 background-animation.js # 🌈 背景动画控制
+│       ├── 📄 config.js            # ⚙️ 应用配置
+│       ├── 📄 utils.js             # 🛠️ 工具函数
+│       ├── 📄 api.js               # 🌐 API 接口封装
+│       ├── 📄 ui.js                # 🎨 UI 操作管理
+│       ├── 📄 fileUpload.js        # 📁 文件上传处理
+│       ├── 📄 messageHandler.js    # 💬 消息处理逻辑
+│       │
+│       └── 📁 admin/               # 🔐 管理后台脚本
+│           ├── 📄 app.js           # 🚀 管理后台入口
+│           ├── 📄 auth.js          # 🔐 认证管理
+│           ├── 📄 api.js           # 🌐 后台 API 封装
+│           ├── 📄 dashboard.js     # 📊 仪表板逻辑
+│           ├── 📄 messages.js      # 💬 消息管理
+│           ├── 📄 files.js         # 📁 文件管理
+│           └── 📄 users.js         # 👥 用户管理
 │
-├── 📁 worker/                # ⚡ Workers 后端代码
-│   └── 📄 index.js           # 🔧 API服务和路由 (Workers)
-│
-├── 📁 functions/             # ⚡ Pages Functions 后端代码
-│   └── 📁 api/               # 🌐 API 路由
-│       ├── 📄 messages.js    # 💬 消息相关 API
-│       ├── 📄 sync.js        # 🔄 设备同步 API
-│       ├── 📄 clear-all.js   # 🧹 数据清理 API
-│       └── 📁 files/
-│           ├── 📄 upload.js  # 📁 文件上传 API
+├── 📁 functions/                   # ⚡ Pages Functions API
+│   └── 📁 api/                     # 🌐 API 路由
+│       ├── 📄 messages.js          # 💬 消息 API
+│       ├── 📄 sync.js              # 🔄 同步 API
+│       ├── 📄 clear-all.js         # 🧹 清理 API
+│       ├── 📁 auth/                # 🔐 认证 API
+│       │   ├── 📄 login.js         # 🔑 登录
+│       │   └── 📄 register.js      # 📝 注册
+│       ├── 📁 admin/               # 🔐 管理后台 API
+│       │   ├── 📄 dashboard.js     # 📊 仪表板数据
+│       │   ├── 📄 messages.js      # 💬 消息管理
+│       │   ├── 📄 files.js         # 📁 文件管理
+│       │   └── 📄 users.js         # 👥 用户管理
+│       └── 📁 files/               # 📁 文件 API
+│           ├── 📄 upload.js        # ⬆️ 文件上传
 │           └── 📁 download/
-│               └── 📄 [r2Key].js # ⬇️ 文件下载 API
+│               └── 📄 [r2Key].js   # ⬇️ 文件下载
 │
-└── 📁 database/              # 🗄️ 数据库相关
-    └── 📄 schema.sql         # 🏗️ 数据库结构定义
-```
-
-</details>
-
-### 🏗️ 架构设计
-
-```mermaid
-graph LR
-    subgraph "🎨 前端层"
-        A[HTML5 结构] --> B[CSS3 样式]
-        B --> C[ES6+ 逻辑]
-    end
-
-    subgraph "🌐 网络层"
-        D[RESTful API]
-        E[WebSocket 连接]
-    end
-
-    subgraph "⚡ 服务层"
-        F[Hono 路由]
-        G[业务逻辑]
-        H[文件处理]
-    end
-
-    subgraph "💾 数据层"
-        I[D1 数据库]
-        J[R2 存储]
-    end
-
-    C --> D
-    D --> F
-    F --> I
-    F --> J
+├── 📁 worker/                      # ⚡ Workers 模式代码
+│   └── 📄 index.js                 # 🔧 Workers 入口
+│
+└── 📁 docs/                        # 📚 文档
+    ├── 📄 DATABASE_SETUP.md        # 🗄️ 数据库设置指南
+    ├── 📄 MANUAL_D1_SETUP.md       # 🔧 手动数据库创建指南
+    ├── 📄 ADMIN_SETUP_GUIDE.md     # 🔐 管理后台设置指南
+    └── 📄 MIGRATION_GUIDE.md       # 🔄 迁移指南
 ```
 
 ## 🚀 快速开始
@@ -112,7 +149,7 @@ graph LR
 
 ### ⚡ 一键部署
 
-#### 🚀 方式一：部署到 Cloudflare Pages（推荐）
+#### 🌟 方式一：Cloudflare Pages（推荐）
 
 ```bash
 # 1️⃣ 克隆项目
@@ -125,407 +162,184 @@ npm install
 # 3️⃣ 登录 Cloudflare
 npx wrangler login
 
-# 4️⃣ 创建 D1 数据库
-npx wrangler d1 create wxchat
+# 4️⃣ 一键设置数据库和存储
+npm run setup
 
-# 5️⃣ 创建 R2 存储桶
-npx wrangler r2 bucket create wxchat
+# 5️⃣ 配置环境变量（可选）
+# 编辑 wrangler-pages.toml 中的 ADMIN_USERNAME 和 ADMIN_PASSWORD
 
-# 6️⃣ 初始化数据库
-npm run db:init
-
-# 7️⃣ 创建 Pages 项目
+# 6️⃣ 创建 Pages 项目
 npm run pages:create
 
-# 8️⃣ 部署到 Pages
+# 7️⃣ 部署到 Pages
 npm run pages:deploy
 ```
 
-#### ⚡ 方式二：部署到 Cloudflare Workers
+#### ⚡ 方式二：Cloudflare Workers
 
 ```bash
-# 前面步骤 1-6 相同
+# 前面步骤 1-4 相同
 
-# 7️⃣ 部署到 Workers
+# 5️⃣ 配置环境变量（可选）
+# 编辑 wrangler.toml 中的 ADMIN_USERNAME 和 ADMIN_PASSWORD
+
+# 6️⃣ 部署到 Workers
 npm run deploy
 ```
 
-### 🎯 配置说明
+### 🎯 部署后配置
+
+1. **访问应用**: 使用 Cloudflare 提供的域名访问
+2. **管理后台**: 访问 `/admin.html` 进入管理后台
+3. **默认账户**: 用户名 `admin`，密码 `admin123`（可通过环境变量自定义）
+4. **安全配置**:
+   - 修改 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD` 环境变量
+   - 更新 `JWT_SECRET` 为强随机字符串
+5. **自定义域名**: 在 Cloudflare Dashboard 中绑定自定义域名
+
+> ⚠️ **重要**: 生产环境部署后，请立即修改默认的管理员用户名和密码！
+
+## 🔧 部署指南
+
+### 🗄️ 数据库设置
+
+#### 自动化设置（推荐）
+```bash
+npm run setup
+```
+
+#### 手动设置
+```bash
+# 创建 D1 数据库
+npx wrangler d1 create wxchat
+
+# 创建 R2 存储桶
+npx wrangler r2 bucket create wxchat
+
+# 初始化数据库表
+npm run db:init-all
+```
+
+详细设置指南：
+- 📖 [数据库设置完整指南](DATABASE_SETUP.md)
+- 🔧 [手动 D1 数据库创建指南](MANUAL_D1_SETUP.md)
+
+### ⚙️ 配置文件
 
 #### Workers 配置 (`wrangler.toml`)
-
 ```toml
 name = "wxchat"
 main = "worker/index.js"
 compatibility_date = "2025-06-17"
 
-# D1 数据库配置
+# 环境变量配置
+[vars]
+ADMIN_USERNAME = "admin"              # 默认管理员用户名
+ADMIN_PASSWORD = "admin123"           # 默认管理员密码
+JWT_SECRET = "your-jwt-secret-key"    # JWT 密钥（生产环境请修改）
+
 [[d1_databases]]
 binding = "DB"
 database_name = "wxchat"
-database_id = "your-database-id"  # 替换为实际数据库ID
+database_id = "your-database-id"
 
-# R2 存储桶配置
 [[r2_buckets]]
 binding = "R2"
 bucket_name = "wxchat"
 ```
 
 #### Pages 配置 (`wrangler-pages.toml`)
-
 ```toml
 name = "wxchat-pages"
 compatibility_date = "2025-06-17"
-
-# Pages 配置
 pages_build_output_dir = "./public"
 
-# D1 数据库配置
+# 环境变量配置
+[vars]
+ENVIRONMENT = "production"
+ADMIN_USERNAME = "admin"              # 默认管理员用户名
+ADMIN_PASSWORD = "admin123"           # 默认管理员密码
+JWT_SECRET = "your-jwt-secret-key"    # JWT 密钥（生产环境请修改）
+
 [[d1_databases]]
 binding = "DB"
 database_name = "wxchat"
-database_id = "your-database-id"  # 替换为实际数据库ID
+database_id = "your-database-id"
 
-# R2 存储桶配置
 [[r2_buckets]]
 binding = "R2"
 bucket_name = "wxchat"
 ```
 
-> 📝 **注意**: 两种部署方式可以共享相同的 D1 数据库和 R2 存储桶
+### 🔐 环境变量说明
+
+| 变量名 | 默认值 | 说明 | 是否必需 |
+|--------|--------|------|----------|
+| `ADMIN_USERNAME` | `admin` | 默认管理员用户名 | ✅ 必需 |
+| `ADMIN_PASSWORD` | `admin123` | 默认管理员密码 | ✅ 必需 |
+| `JWT_SECRET` | `your-jwt-secret-key` | JWT 令牌签名密钥 | ✅ 必需 |
+| `ENVIRONMENT` | `production` | 运行环境标识 | ❌ 可选 |
+
+> ⚠️ **安全提醒**:
+> - 生产环境中请务必修改默认的管理员用户名和密码
+> - JWT_SECRET 应设置为强随机字符串
+> - 建议定期更换管理员密码
 
 ## 📱 使用指南
 
 ### 🎮 基础功能
 
-<div align="center">
-
 | 功能 | 操作方式 | 说明 |
 |------|---------|------|
 | 💬 **发送消息** | 输入框输入 → 点击发送 | 支持文本和表情符号 |
-| 📁 **上传文件** | 点击📁按钮 或 拖拽文件 | 最大10MB，支持所有格式 |
+| 📁 **上传文件** | 点击📁按钮 或 拖拽文件 | 最大1GB，支持所有格式 |
 | ⬇️ **下载文件** | 点击文件消息中的下载按钮 | 保持原始文件名 |
 | 🔄 **跨设备同步** | 不同设备访问相同URL | 自动同步所有消息和文件 |
 
-</div>
+### 🔐 管理后台功能
 
-### 🎯 高级功能
+#### 登录管理后台
+1. 访问 `/admin.html`
+2. 使用默认账户登录：
+   - 用户名：`admin`（可通过 `ADMIN_USERNAME` 环境变量自定义）
+   - 密码：`admin123`（可通过 `ADMIN_PASSWORD` 环境变量自定义）
 
-#### 🧹 数据清理功能
+> 💡 **提示**: 默认管理员账户通过环境变量 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD` 配置，生产环境请务必修改默认值。
 
-当存储空间不足时，可以使用数据清理功能：
+#### 主要功能
+- 📊 **仪表板** - 查看系统统计和图表
+- 💬 **信息管理** - 管理所有用户消息
+- 📁 **文件管理** - 批量管理上传的文件
+- 👥 **用户管理** - 管理用户账户和权限
 
+### 🧹 数据清理功能
+
+发送以下指令可以清理所有数据：
 ```
-1️⃣ 发送清理指令：
-   /clear-all
-   清空数据
-   /清空
-   clear all
-
-2️⃣ 确认操作：
-   点击确认对话框的"确定"
-
-3️⃣ 输入确认码：
-   输入：1234
-
-4️⃣ 查看清理结果：
-   ✅ 数据清理完成！
-   📊 清理统计：
-   • 删除消息：XX 条
-   • 删除文件：XX 个
-   • 释放空间：XX MB
+/clear-all
+清空数据
+/清空
+clear all
 ```
 
-#### 📱 微信移动端体验
-
-- **动态发送按钮** - 输入时出现圆形绿色按钮
-- **平滑动画** - 微信级别的过渡效果
-- **触摸优化** - 移动端友好的交互设计
-- **响应式布局** - 完美适配各种屏幕尺寸
-
-### 🔧 快捷操作
-
-| 快捷键 | 功能 | 说明 |
-|--------|------|------|
-| `Enter` | 发送消息 | 在输入框中按回车发送 |
-| `Shift + Enter` | 换行 | 在消息中添加换行符 |
-| `Ctrl + V` | 粘贴文件 | 从剪贴板粘贴图片文件 |
-| 拖拽 | 上传文件 | 拖拽文件到聊天区域上传 |
-
-## 🔧 API 接口文档
-
-### 📡 RESTful API
-
-<details>
-<summary>📋 点击查看完整API文档</summary>
-
-#### 💬 消息相关
-
-```http
-GET /api/messages
-```
-**功能**: 获取消息列表
-**参数**:
-- `limit` (可选): 限制返回数量，默认50
-- `offset` (可选): 偏移量，默认0
-
-**响应**:
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "type": "text",
-      "content": "Hello World",
-      "device_id": "web-123456",
-      "timestamp": "2025-06-17T00:00:00Z"
-    }
-  ]
-}
-```
-
----
-
-```http
-POST /api/messages
-```
-**功能**: 发送文本消息
-**请求体**:
-```json
-{
-  "content": "消息内容",
-  "deviceId": "设备ID"
-}
-```
-
-#### 📁 文件相关
-
-```http
-POST /api/files/upload
-```
-**功能**: 上传文件
-**请求**: `multipart/form-data`
-- `file`: 文件数据
-- `deviceId`: 设备ID
-
-```http
-GET /api/files/download/:r2Key
-```
-**功能**: 下载文件
-**参数**: `r2Key` - R2存储键
-
-#### 🔄 设备同步
-
-```http
-POST /api/sync
-```
-**功能**: 设备同步
-**请求体**:
-```json
-{
-  "deviceId": "设备ID",
-  "deviceName": "设备名称"
-}
-```
-
-#### 🧹 数据清理
-
-```http
-POST /api/clear-all
-```
-**功能**: 清空所有数据
-**请求体**:
-```json
-{
-  "confirmCode": "1234"
-}
-```
-
-</details>
-
-### 🗄️ 数据库设计
-
-<details>
-<summary>📊 点击查看数据库结构</summary>
-
-#### 📋 表结构
-
-```sql
--- 消息表
-CREATE TABLE messages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type TEXT NOT NULL CHECK (type IN ('text', 'file')),
-    content TEXT,
-    file_id INTEGER,
-    device_id TEXT NOT NULL,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (file_id) REFERENCES files(id)
-);
-
--- 文件表
-CREATE TABLE files (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    original_name TEXT NOT NULL,
-    file_name TEXT NOT NULL,
-    file_size INTEGER NOT NULL,
-    mime_type TEXT NOT NULL,
-    r2_key TEXT NOT NULL UNIQUE,
-    upload_device_id TEXT NOT NULL,
-    download_count INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
--- 设备表
-CREATE TABLE devices (
-    id TEXT PRIMARY KEY,
-    name TEXT,
-    last_active DATETIME DEFAULT CURRENT_TIMESTAMP,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-#### 🔗 关系图
-
-```mermaid
-erDiagram
-    MESSAGES ||--o{ FILES : contains
-    MESSAGES }o--|| DEVICES : sent_by
-    FILES }o--|| DEVICES : uploaded_by
-
-    MESSAGES {
-        int id PK
-        string type
-        string content
-        int file_id FK
-        string device_id FK
-        datetime timestamp
-    }
-
-    FILES {
-        int id PK
-        string original_name
-        string file_name
-        int file_size
-        string mime_type
-        string r2_key
-        string upload_device_id FK
-        int download_count
-        datetime created_at
-    }
-
-    DEVICES {
-        string id PK
-        string name
-        datetime last_active
-        datetime created_at
-    }
-```
-
-</details>
-
-## 🚀 部署指南
-
-### 🌍 生产环境部署
-
-<details>
-<summary>🔧 详细部署步骤</summary>
-
-#### 1️⃣ GitHub Actions 自动部署
-
-创建 `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy to Cloudflare Workers
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-```
-
-#### 2️⃣ 环境变量配置
-
-在 GitHub Secrets 中添加：
-- `CLOUDFLARE_API_TOKEN`: Cloudflare API 令牌
-
-#### 3️⃣ 域名配置
-
-```bash
-# 绑定自定义域名
-npx wrangler route add "your-domain.com/*" wxchat
-```
-
-</details>
-
-### 📊 性能监控
-
-<details>
-<summary>📈 监控和分析</summary>
-
-#### Cloudflare Analytics
-
-- **请求量监控**: 实时查看API调用量
-- **错误率追踪**: 监控应用健康状态
-- **性能分析**: 响应时间和延迟统计
-
-#### 存储使用情况
-
-```bash
-# 查看 D1 数据库使用情况
-npx wrangler d1 info wxchat
-
-# 查看 R2 存储使用情况
-npx wrangler r2 bucket info wxchat
-```
-
-</details>
-
-## 💡 设计理念
-
-<div align="center">
-
-### 🎯 核心原则
-
-| 原则 | 说明 | 实现 |
-|------|------|------|
-| **🚀 性能优先** | 极致的加载速度和响应性能 | 边缘计算 + CDN加速 |
-| **📱 移动优先** | 完美的移动端用户体验 | 响应式设计 + 触摸优化 |
-| **🛡️ 安全可靠** | 数据安全和隐私保护 | 多重验证 + 安全传输 |
-| **🎨 美观易用** | 直观的界面和流畅的交互 | 微信级UI + 平滑动画 |
-| **⚡ 零配置** | 开箱即用的部署体验 | 一键部署 + 自动配置 |
-
-</div>
-
-### 🌟 技术亮点
-
-- **🔥 零依赖前端** - 纯原生技术栈，极致性能
-- **⚡ 边缘计算** - 全球部署，毫秒级响应
-- **📱 微信级UI** - 像素级还原微信界面
-- **🛡️ 企业级安全** - 多重验证，数据保护
-- **🚀 自动扩容** - 无服务器架构，按需付费
-
-## 🤝 贡献指南
-
-### 🔧 开发环境
+## 🎨 界面特性
+
+### 🌈 动态背景
+- **浮动粒子** - 多彩粒子上升动画
+- **几何图形** - 旋转的几何元素
+- **光点效果** - 闪烁的星光效果
+- **波浪动画** - 底部流动波浪
+- **鼠标交互** - 跟随鼠标的渐变变化
+
+### 💫 现代化设计
+- **玻璃态效果** - 半透明模糊背景
+- **流畅动画** - 60fps 平滑过渡
+- **响应式布局** - 完美适配各种设备
+- **主题适配** - 自动适配系统主题
+
+## 🔧 开发指南
+
+### 🛠️ 本地开发
 
 ```bash
 # 克隆项目
@@ -535,14 +349,97 @@ cd wxchat
 # 安装依赖
 npm install
 
-# 本地开发
+# 本地开发 (Pages 模式)
+npm run pages:dev
+
+# 本地开发 (Workers 模式)
 npm run dev
+```
 
-# 代码检查
-npm run lint
+### 📦 可用脚本
 
-# 构建项目
-npm run build
+```bash
+# 数据库管理
+npm run setup           # 一键数据库设置
+npm run db:init         # 初始化基础表
+npm run db:init-admin   # 初始化管理后台表
+npm run db:init-all     # 初始化所有表
+npm run db:reset        # 重置数据库
+
+# 构建和部署
+npm run build           # 构建 Workers 版本
+npm run build:pages     # 构建 Pages 版本
+npm run deploy          # 部署到 Workers
+npm run pages:deploy    # 部署到 Pages
+npm run pages:create    # 创建 Pages 项目
+
+# 开发调试
+npm run dev             # Workers 本地开发
+npm run pages:dev       # Pages 本地开发
+```
+
+## 🗄️ 数据库结构
+
+### 基础表
+- **messages** - 消息表（文本和文件消息）
+- **files** - 文件表（文件元数据和存储信息）
+- **devices** - 设备表（设备标识和活动状态）
+
+### 管理后台表
+- **users** - 用户表（管理员和用户账户）
+- **sessions** - 会话表（登录状态管理）
+- **daily_stats** - 统计表（每日数据统计）
+- **admin_logs** - 操作日志表（管理操作记录）
+
+## 🔐 安全特性
+
+- 🔒 **密码加密** - bcrypt 哈希加密
+- 🎫 **JWT 认证** - 安全的会话管理
+- 🛡️ **CORS 保护** - 跨域请求保护
+- 🔍 **输入验证** - 严格的数据验证
+- 📝 **操作日志** - 完整的审计日志
+- ⚙️ **环境变量配置** - 敏感信息通过环境变量管理
+- 🔐 **默认账户保护** - 支持自定义管理员凭据
+
+## 📈 性能优化
+
+- ⚡ **边缘计算** - Cloudflare 全球边缘节点
+- 🗜️ **资源压缩** - CSS/JS 自动压缩
+- 🎯 **懒加载** - 按需加载资源
+- 💾 **智能缓存** - 多层缓存策略
+- 📱 **移动优化** - 移动端性能优化
+
+## 🌍 浏览器支持
+
+| 浏览器 | 版本 | 支持状态 |
+|--------|------|----------|
+| Chrome | 80+ | ✅ 完全支持 |
+| Firefox | 75+ | ✅ 完全支持 |
+| Safari | 13+ | ✅ 完全支持 |
+| Edge | 80+ | ✅ 完全支持 |
+| 移动浏览器 | 现代版本 | ✅ 完全支持 |
+
+## 🤝 贡献指南
+
+### 🔧 开发环境设置
+
+```bash
+# Fork 项目并克隆
+git clone https://github.com/your-username/wxchat.git
+cd wxchat
+
+# 安装依赖
+npm install
+
+# 创建功能分支
+git checkout -b feature/your-feature-name
+
+# 开发和测试
+npm run pages:dev
+
+# 提交更改
+git commit -m "feat: add your feature"
+git push origin feature/your-feature-name
 ```
 
 ### 📝 提交规范
@@ -557,13 +454,21 @@ test: 测试相关
 chore: 构建过程或辅助工具的变动
 ```
 
-### 🐛 问题反馈
+## 📚 文档
+
+- 📖 [数据库设置指南](DATABASE_SETUP.md)
+- 🔧 [手动 D1 数据库创建](MANUAL_D1_SETUP.md)
+- 🔐 [管理后台设置指南](ADMIN_SETUP_GUIDE.md)
+- 🔄 [版本迁移指南](MIGRATION_GUIDE.md)
+- 📄 [API 文档](docs/API.md)
+
+## 🐛 问题反馈
 
 遇到问题？请通过以下方式反馈：
 
 - 🐛 [提交 Issue](https://github.com/flalad/wxchat/issues)
 - 💬 [讨论区](https://github.com/flalad/wxchat/discussions)
-
+- 📧 [邮件联系](mailto:support@example.com)
 
 ## 📄 许可证
 
@@ -585,21 +490,27 @@ Copyright (c) 2025 微信文件传输助手
 - ❌ **禁止**: 任何形式的商业用途
 - ❌ **禁止**: 商业销售或盈利
 
-### 📋 使用条件
+</div>
 
-1. **署名** - 必须给出适当的署名，提供指向许可证的链接
-2. **非商业性使用** - 不得将本作品用于商业目的
-3. **相同方式共享** - 如果您再混合、转换或者基于本作品进行创作，您必须基于与原先许可协议相同的许可协议分发您贡献的作品
+## 🙏 致谢
+
+感谢以下技术和服务：
+
+- [Cloudflare Workers](https://workers.cloudflare.com/) - 边缘计算平台
+- [Cloudflare Pages](https://pages.cloudflare.com/) - 静态站点托管
+- [Cloudflare D1](https://developers.cloudflare.com/d1/) - 边缘数据库
+- [Cloudflare R2](https://developers.cloudflare.com/r2/) - 对象存储
+- [Hono](https://hono.dev/) - 轻量级 Web 框架
+- [Chart.js](https://www.chartjs.org/) - 图表库
 
 ---
 
-<p>
-  <strong>🌟 如果这个项目对你有帮助，请给个 Star ⭐</strong><br>
-  <em>Made with ❤️ by flalad</em>
-</p>
+<div align="center">
 
-<p>
-  <a href="#-微信文件传输助手-web-应用">回到顶部 ⬆️</a>
-</p>
+**🌟 如果这个项目对你有帮助，请给个 Star ⭐**
+
+*Made with ❤️ by flalad*
+
+[回到顶部 ⬆️](#-微信文件传输助手-web-应用)
 
 </div>

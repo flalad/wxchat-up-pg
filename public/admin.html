@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="微信文件传输助手管理后台 - 现代化的数据管理平台">
+    <meta name="keywords" content="微信,文件传输,管理后台,数据统计">
+    <title>微信文件传输助手 - 管理后台</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/admin-enhanced.css">
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="css/admin.css" as="style">
+    <link rel="preload" href="js/admin/app.js" as="script">
+</head>
+<body>
+    <!-- 登录模态框 -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="login-container">
+                <div class="login-header">
+                    <div class="login-icon">🔐</div>
+                    <h2>管理员登录</h2>
+                    <p class="login-subtitle">欢迎回来，请输入您的凭据</p>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">
+                            <span class="label-icon">👤</span>
+                            用户名
+                        </label>
+                        <input type="text" id="username" name="username" required
+                               placeholder="请输入用户名" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">
+                            <span class="label-icon">🔒</span>
+                            密码
+                        </label>
+                        <input type="password" id="password" name="password" required
+                               placeholder="请输入密码" autocomplete="current-password">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-icon">🚀</span>
+                            立即登录
+                        </button>
+                        <button type="button" id="showRegister" class="btn btn-link">
+                            还没有账户？立即注册
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- 注册表单 -->
+                <form id="registerForm" style="display: none;">
+                    <div class="login-header">
+                        <div class="login-icon">✨</div>
+                        <h2>用户注册</h2>
+                        <p class="login-subtitle">创建您的管理员账户</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regUsername">
+                            <span class="label-icon">👤</span>
+                            用户名
+                        </label>
+                        <input type="text" id="regUsername" name="username" required
+                               placeholder="请输入用户名" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">
+                            <span class="label-icon">🔒</span>
+                            密码
+                        </label>
+                        <input type="password" id="regPassword" name="password" required
+                               placeholder="请输入密码" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">
+                            <span class="label-icon">📧</span>
+                            邮箱（可选）
+                        </label>
+                        <input type="email" id="regEmail" name="email"
+                               placeholder="请输入邮箱地址" autocomplete="email">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-icon">🎉</span>
+                            创建账户
+                        </button>
+                        <button type="button" id="showLogin" class="btn btn-link">
+                            已有账户？立即登录
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- 默认账户提示 -->
+                <div class="default-account-tip">
+                    <div class="tip-icon">💡</div>
+                    <div class="tip-content">
+                        <strong>默认管理员账户：</strong><br>
+                        用户名：<code>admin</code><br>
+                        密码：<code>admin123</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主界面 -->
+    <div id="adminApp" style="display: none;">
+        <!-- 顶部导航栏 -->
+        <header class="admin-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <div class="logo-icon">📊</div>
+                    <div class="logo-text">
+                        <h1>微信文件传输助手</h1>
+                        <span class="logo-subtitle">管理后台</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span>
+                        <span class="stat-value" id="headerUserCount">0</span>
+                        <span class="stat-label">用户</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">💬</span>
+                        <span class="stat-value" id="headerMessageCount">0</span>
+                        <span class="stat-label">消息</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">📁</span>
+                        <span class="stat-value" id="headerFileCount">0</span>
+                        <span class="stat-label">文件</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="header-btn" id="refreshAllBtn" title="刷新数据">
+                        <span class="btn-icon">🔄</span>
+                    </button>
+                    <button class="header-btn" id="settingsBtn" title="设置">
+                        <span class="btn-icon">⚙️</span>
+                    </button>
+                    <div class="user-menu">
+                        <div class="user-info">
+                            <div class="user-avatar">👤</div>
+                            <div class="user-details">
+                                <span class="user-name" id="currentUser">管理员</span>
+                                <span class="user-role">Administrator</span>
+                            </div>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-outline">
+                            <span class="btn-icon">🚪</span>
+                            退出登录
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-container">
+            <!-- 侧边栏 -->
+            <aside class="admin-sidebar">
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-section-title">
+                            <span class="section-icon">🏠</span>
+                            <span>主要功能</span>
+                        </div>
+                        <ul>
+                            <li class="nav-item active" data-page="dashboard">
+                                <a href="#dashboard">
+                                    <i class="icon">📊</i>
+                                    <span>仪表板</span>
+                                    <div class="nav-indicator"></div>
+                                </a>
+                            </li>
+                            <li class="nav-item" data-page="messages">
+                                <a href="#messages">
+                                    <i class="icon">💬</i>
+                                    <span>信息管理</span>
+                                    <div class="nav-badge" id="messagesBadge">0</div>
+                                    <div class="nav-indicator"></div>
+                                </a>
+                            </li>
+                            <li class="nav-item" data-page="files">
+                                <a href="#files">
+                                    <i class="icon">📁</i>
+                                    <span>文件管理</span>
+                                    <div class="nav-badge" id="filesBadge">0</div>
+                                    <div class="nav-indicator"></div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="nav-section">
+                        <div class="nav-section-title">
+                            <span class="section-icon">⚙️</span>
+                            <span>系统管理</span>
+                        </div>
+                        <ul>
+                            <li class="nav-item" data-page="users">
+                                <a href="#users">
+                                    <i class="icon">👥</i>
+                                    <span>用户管理</span>
+                                    <div class="nav-badge" id="usersBadge">0</div>
+                                    <div class="nav-indicator"></div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="nav-footer">
+                        <div class="system-status">
+                            <div class="status-indicator online"></div>
+                            <span>系统运行正常</span>
+                        </div>
+                        <div class="version-info">
+                            <span>版本 v1.0.0</span>
+                        </div>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- 主内容区 -->
+            <main class="admin-main">
+                <!-- 仪表板页面 -->
+                <div id="dashboardPage" class="page active">
+                    <div class="page-header">
+                        <h2>仪表板</h2>
+                        <p>系统概览和统计信息</p>
+                    </div>
+
+                    <!-- 统计卡片 -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-content">
+                                <h3 id="totalUsers">0</h3>
+                                <p>总用户数</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💬</div>
+                            <div class="stat-content">
+                                <h3 id="totalMessages">0</h3>
+                                <p>总消息数</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📁</div>
+                            <div class="stat-content">
+                                <h3 id="totalFiles">0</h3>
+                                <p>总文件数</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💾</div>
+                            <div class="stat-content">
+                                <h3 id="totalStorage">0 MB</h3>
+                                <p>存储使用</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 图表区域 -->
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h3>最近7天活动统计</h3>
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>文件类型分布</h3>
+                            <canvas id="fileTypeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 最近用户 -->
+                    <div class="recent-users">
+                        <h3>最近注册用户</h3>
+                        <div class="table-container">
+                            <table id="recentUsersTable">
+                                <thead>
+                                    <tr>
+                                        <th>用户名</th>
+                                        <th>注册时间</th>
+                                        <th>最后登录</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 信息管理页面 -->
+                <div id="messagesPage" class="page">
+                    <div class="page-header">
+                        <h2>信息管理</h2>
+                        <div class="page-actions">
+                            <input type="text" id="messageSearch" placeholder="搜索消息...">
+                            <select id="messageTypeFilter">
+                                <option value="">所有类型</option>
+                                <option value="text">文本消息</option>
+                                <option value="file">文件消息</option>
+                            </select>
+                            <button id="refreshMessages" class="btn btn-primary">刷新</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="messagesTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>类型</th>
+                                    <th>内容</th>
+                                    <th>用户</th>
+                                    <th>设备</th>
+                                    <th>时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div id="messagesPagination" class="pagination"></div>
+                </div>
+
+                <!-- 文件管理页面 -->
+                <div id="filesPage" class="page">
+                    <div class="page-header">
+                        <h2>文件管理</h2>
+                        <div class="page-actions">
+                            <input type="text" id="fileSearch" placeholder="搜索文件...">
+                            <select id="fileTypeFilter">
+                                <option value="">所有类型</option>
+                                <option value="image/">图片</option>
+                                <option value="video/">视频</option>
+                                <option value="audio/">音频</option>
+                                <option value="application/pdf">PDF</option>
+                            </select>
+                            <button id="refreshFiles" class="btn btn-primary">刷新</button>
+                            <button id="batchDeleteFiles" class="btn btn-danger">批量删除</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="filesTable">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllFiles"></th>
+                                    <th>文件名</th>
+                                    <th>大小</th>
+                                    <th>类型</th>
+                                    <th>用户</th>
+                                    <th>下载次数</th>
+                                    <th>上传时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div id="filesPagination" class="pagination"></div>
+                </div>
+
+                <!-- 用户管理页面 -->
+                <div id="usersPage" class="page">
+                    <div class="page-header">
+                        <h2>用户管理</h2>
+                        <div class="page-actions">
+                            <input type="text" id="userSearch" placeholder="搜索用户...">
+                            <select id="userRoleFilter">
+                                <option value="">所有角色</option>
+                                <option value="admin">管理员</option>
+                                <option value="user">普通用户</option>
+                            </select>
+                            <select id="userStatusFilter">
+                                <option value="">所有状态</option>
+                                <option value="true">活跃</option>
+                                <option value="false">禁用</option>
+                            </select>
+                            <button id="refreshUsers" class="btn btn-primary">刷新</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>用户名</th>
+                                    <th>邮箱</th>
+                                    <th>角色</th>
+                                    <th>状态</th>
+                                    <th>消息数</th>
+                                    <th>文件数</th>
+                                    <th>注册时间</th>
+                                    <th>最后登录</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div id="usersPagination" class="pagination"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 通知容器 -->
+    <div id="notifications"></div>
+
+    <!-- 确认对话框 -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="confirm-dialog">
+                <h3 id="confirmTitle">确认操作</h3>
+                <p id="confirmMessage">您确定要执行此操作吗？</p>
+                <div class="confirm-actions">
+                    <button id="confirmCancel" class="btn btn-outline">取消</button>
+                    <button id="confirmOk" class="btn btn-danger">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin/auth.js"></script>
+    <script src="js/admin/api.js"></script>
+    <script src="js/admin/dashboard.js"></script>
+    <script src="js/admin/messages.js"></script>
+    <script src="js/admin/files.js"></script>
+    <script src="js/admin/users.js"></script>
+    <script src="js/admin/app.js"></script>
+</body>
+</html>

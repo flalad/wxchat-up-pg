@@ -1,0 +1,420 @@
+/* 动态背景样式 - 浅色系粒子动画 */
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 动态背景容器 */
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(135deg, 
+        rgba(102, 126, 234, 0.1) 0%, 
+        rgba(118, 75, 162, 0.1) 25%,
+        rgba(255, 255, 255, 0.9) 50%,
+        rgba(102, 126, 234, 0.1) 75%,
+        rgba(118, 75, 162, 0.1) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 浮动粒子 */
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.6;
+    animation: float 20s infinite linear;
+}
+
+.particle:nth-child(1) {
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.8) 0%, rgba(102, 126, 234, 0.2) 100%);
+    left: 10%;
+    animation-duration: 25s;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(circle, rgba(118, 75, 162, 0.7) 0%, rgba(118, 75, 162, 0.2) 100%);
+    left: 20%;
+    animation-duration: 30s;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(3) {
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, rgba(7, 193, 96, 0.8) 0%, rgba(7, 193, 96, 0.2) 100%);
+    left: 30%;
+    animation-duration: 22s;
+    animation-delay: 4s;
+}
+
+.particle:nth-child(4) {
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle, rgba(255, 167, 38, 0.7) 0%, rgba(255, 167, 38, 0.2) 100%);
+    left: 40%;
+    animation-duration: 28s;
+    animation-delay: 1s;
+}
+
+.particle:nth-child(5) {
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.6) 0%, rgba(102, 126, 234, 0.1) 100%);
+    left: 50%;
+    animation-duration: 35s;
+    animation-delay: 3s;
+}
+
+.particle:nth-child(6) {
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, rgba(118, 75, 162, 0.8) 0%, rgba(118, 75, 162, 0.2) 100%);
+    left: 60%;
+    animation-duration: 26s;
+    animation-delay: 5s;
+}
+
+.particle:nth-child(7) {
+    width: 16px;
+    height: 16px;
+    background: radial-gradient(circle, rgba(7, 193, 96, 0.5) 0%, rgba(7, 193, 96, 0.1) 100%);
+    left: 70%;
+    animation-duration: 32s;
+    animation-delay: 2.5s;
+}
+
+.particle:nth-child(8) {
+    width: 9px;
+    height: 9px;
+    background: radial-gradient(circle, rgba(255, 167, 38, 0.8) 0%, rgba(255, 167, 38, 0.2) 100%);
+    left: 80%;
+    animation-duration: 24s;
+    animation-delay: 1.5s;
+}
+
+.particle:nth-child(9) {
+    width: 11px;
+    height: 11px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.7) 0%, rgba(102, 126, 234, 0.2) 100%);
+    left: 90%;
+    animation-duration: 29s;
+    animation-delay: 4.5s;
+}
+
+.particle:nth-child(10) {
+    width: 7px;
+    height: 7px;
+    background: radial-gradient(circle, rgba(118, 75, 162, 0.9) 0%, rgba(118, 75, 162, 0.2) 100%);
+    left: 15%;
+    animation-duration: 27s;
+    animation-delay: 3.5s;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 波浪效果 */
+.wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' opacity='.25' fill='%23ffffff'%3E%3C/path%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' opacity='.5' fill='%23ffffff'%3E%3C/path%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%23ffffff'%3E%3C/path%3E%3C/svg%3E") repeat-x;
+    background-size: 1200px 120px;
+    animation: waveMove 10s ease-in-out infinite;
+    opacity: 0.3;
+}
+
+@keyframes waveMove {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-50px);
+    }
+}
+
+/* 光点效果 */
+.light-dot {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: twinkle 3s ease-in-out infinite;
+}
+
+.light-dot:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.light-dot:nth-child(2) {
+    top: 40%;
+    left: 30%;
+    animation-delay: 1s;
+}
+
+.light-dot:nth-child(3) {
+    top: 60%;
+    left: 50%;
+    animation-delay: 2s;
+}
+
+.light-dot:nth-child(4) {
+    top: 30%;
+    left: 70%;
+    animation-delay: 1.5s;
+}
+
+.light-dot:nth-child(5) {
+    top: 80%;
+    left: 20%;
+    animation-delay: 0.5s;
+}
+
+.light-dot:nth-child(6) {
+    top: 10%;
+    left: 80%;
+    animation-delay: 2.5s;
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.5);
+    }
+}
+
+/* 几何图形 */
+.geometric-shape {
+    position: absolute;
+    opacity: 0.1;
+    animation: rotate 20s linear infinite;
+}
+
+.geometric-shape.triangle {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 26px solid rgba(102, 126, 234, 0.3);
+    top: 15%;
+    left: 25%;
+    animation-duration: 25s;
+}
+
+.geometric-shape.square {
+    width: 20px;
+    height: 20px;
+    background: rgba(118, 75, 162, 0.3);
+    top: 45%;
+    left: 75%;
+    animation-duration: 30s;
+    animation-direction: reverse;
+}
+
+.geometric-shape.circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(7, 193, 96, 0.3);
+    top: 70%;
+    left: 15%;
+    animation-duration: 22s;
+}
+
+.geometric-shape.hexagon {
+    width: 20px;
+    height: 11px;
+    background: rgba(255, 167, 38, 0.3);
+    position: relative;
+    top: 25%;
+    left: 85%;
+    animation-duration: 28s;
+}
+
+.geometric-shape.hexagon:before,
+.geometric-shape.hexagon:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
+
+.geometric-shape.hexagon:before {
+    bottom: 100%;
+    border-bottom: 6px solid rgba(255, 167, 38, 0.3);
+}
+
+.geometric-shape.hexagon:after {
+    top: 100%;
+    border-top: 6px solid rgba(255, 167, 38, 0.3);
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .particle {
+        width: 6px !important;
+        height: 6px !important;
+    }
+    
+    .geometric-shape {
+        transform: scale(0.7);
+    }
+    
+    .wave {
+        height: 60px;
+    }
+}
+
+/* 性能优化 */
+.animated-background {
+    will-change: background-position;
+    transform: translateZ(0);
+}
+
+.particle {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.geometric-shape {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+    .particle {
+        animation-duration: 35s !important;
+    }
+    
+    .geometric-shape {
+        animation-duration: 40s !important;
+    }
+    
+    .light-dot {
+        animation-duration: 4s !important;
+    }
+}
+
+/* 高刷新率屏幕优化 */
+@media (min-resolution: 120dpi) {
+    .animated-background {
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+/* 减少动画偏好设置 */
+@media (prefers-reduced-motion: reduce) {
+    .animated-background,
+    .particle,
+    .wave,
+    .light-dot,
+    .geometric-shape {
+        animation: none !important;
+    }
+    
+    .animated-background {
+        background: linear-gradient(135deg,
+            rgba(102, 126, 234, 0.05) 0%,
+            rgba(118, 75, 162, 0.05) 25%,
+            rgba(255, 255, 255, 0.95) 50%,
+            rgba(102, 126, 234, 0.05) 75%,
+            rgba(118, 75, 162, 0.05) 100%
+        );
+    }
+}
+
+/* 暗色主题适配 */
+@media (prefers-color-scheme: dark) {
+    .animated-background {
+        background: linear-gradient(135deg,
+            rgba(102, 126, 234, 0.2) 0%,
+            rgba(118, 75, 162, 0.2) 25%,
+            rgba(30, 30, 30, 0.9) 50%,
+            rgba(102, 126, 234, 0.2) 75%,
+            rgba(118, 75, 162, 0.2) 100%
+        );
+    }
+    
+    .particle {
+        opacity: 0.8;
+    }
+    
+    .light-dot {
+        background: rgba(255, 255, 255, 0.6);
+    }
+}
+
+/* 低端设备优化 */
+@media (max-width: 480px) and (max-height: 800px) {
+    .particle:nth-child(n+6) {
+        display: none;
+    }
+    
+    .geometric-shape:nth-child(n+3) {
+        display: none;
+    }
+    
+    .light-dot:nth-child(n+4) {
+        display: none;
+    }
+    
+    .animated-background {
+        animation-duration: 25s;
+    }
+}

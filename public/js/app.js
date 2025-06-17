@@ -1,3 +1,13 @@
+// 管理员登录按钮处理
+document.addEventListener('DOMContentLoaded', () => {
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    if (adminLoginBtn) {
+        adminLoginBtn.addEventListener('click', () => {
+            // 跳转到管理后台页面
+            window.location.href = '/admin.html';
+        });
+    }
+});
 // 应用主入口文件
 
 class WeChatApp {

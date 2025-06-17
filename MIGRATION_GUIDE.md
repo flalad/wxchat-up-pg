@@ -166,4 +166,4 @@ functions/api/ (模块化)
 1. 查看 [`PAGES_DEPLOYMENT.md`](PAGES_DEPLOYMENT.md) 详细部署指南
 2. 检查 Cloudflare Dashboard 中的绑定配置
 3. 确保 D1 数据库和 R2 存储桶已正确创建
-4. 提交 [Issue](https://github.com/xiyewuqiu/wxchat/issues) 获取支持
+4. 提交 [Issue](https://github.com/flalad/wxchat/issues) 获取支持

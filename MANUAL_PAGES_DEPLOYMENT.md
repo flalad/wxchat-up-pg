@@ -237,7 +237,7 @@ wrangler pages deploy ./public --project-name=wxchat-pages --compatibility-date=
 1. 查看 Cloudflare Pages 部署日志
 2. 检查浏览器开发者工具的网络和控制台
 3. 参考 [Cloudflare Pages 官方文档](https://developers.cloudflare.com/pages/)
-4. 提交 [Issue](https://github.com/xiyewuqiu/wxchat/issues) 获取支持
+4. 提交 [Issue](https://github.com/flalad/wxchat/issues) 获取支持
 
 ## 🎯 推荐部署方式
 

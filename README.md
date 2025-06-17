@@ -116,7 +116,7 @@ graph LR
 
 ```bash
 # 1️⃣ 克隆项目
-git clone https://github.com/xiyewuqiu/wxchat.git
+git clone https://github.com/flalad/wxchat.git
 cd wxchat
 
 # 2️⃣ 安装依赖
@@ -529,7 +529,7 @@ npx wrangler r2 bucket info wxchat
 
 ```bash
 # 克隆项目
-git clone https://github.com/xiyewuqiu/wxchat.git
+git clone https://github.com/flalad/wxchat.git
 cd wxchat
 
 # 安装依赖
@@ -561,8 +561,8 @@ chore: 构建过程或辅助工具的变动
 
 遇到问题？请通过以下方式反馈：
 
-- 🐛 [提交 Issue](https://github.com/xiyewuqiu/wxchat/issues)
-- 💬 [讨论区](https://github.com/xiyewuqiu/wxchat/discussions)
+- 🐛 [提交 Issue](https://github.com/flalad/wxchat/issues)
+- 💬 [讨论区](https://github.com/flalad/wxchat/discussions)
 
 
 ## 📄 许可证
@@ -595,7 +595,7 @@ Copyright (c) 2025 微信文件传输助手
 
 <p>
   <strong>🌟 如果这个项目对你有帮助，请给个 Star ⭐</strong><br>
-  <em>Made with ❤️ by xiyewuqiu</em>
+  <em>Made with ❤️ by flalad</em>
 </p>
 
 <p>

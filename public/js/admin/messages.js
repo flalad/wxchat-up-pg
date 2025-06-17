@@ -195,13 +195,6 @@ const Messages = {
 
     // 删除消息
     async deleteMessage(messageId) {
-        const confirmed = await this.showConfirm(
-            '确认删除',
-            '确定要删除这条消息吗？此操作不可撤销。'
-        );
-
-        if (!confirmed) return;
-
         try {
             const result = await AdminAPI.messages.delete(messageId);
 
@@ -241,6 +234,13 @@ const Messages = {
             const messageEl = document.getElementById('confirmMessage');
             const cancelBtn = document.getElementById('confirmCancel');
             const okBtn = document.getElementById('confirmOk');
+
+            // 检查元素是否存在
+            if (!modal || !titleEl || !messageEl || !cancelBtn || !okBtn) {
+                console.error('确认对话框元素未找到');
+                resolve(false);
+                return;
+            }
 
             titleEl.textContent = title;
             messageEl.textContent = message;

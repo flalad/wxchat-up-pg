@@ -12,7 +12,10 @@ const Users = {
     // 初始化
     init() {
         this.bindEvents();
-        this.loadUsers();
+        // 延迟加载用户数据，避免在页面未完全加载时触发
+        setTimeout(() => {
+            this.loadUsers();
+        }, 100);
     },
 
     // 绑定事件
@@ -263,12 +266,6 @@ const Users = {
     // 切换用户状态
     async toggleUserStatus(userId, isActive) {
         const action = isActive ? '启用' : '禁用';
-        const confirmed = await this.showConfirm(
-            `确认${action}用户`,
-            `确定要${action}这个用户吗？`
-        );
-
-        if (!confirmed) return;
 
         try {
             const result = await AdminAPI.users.update(userId, { isActive });
@@ -287,14 +284,6 @@ const Users = {
 
     // 切换用户角色
     async toggleUserRole(userId, role) {
-        const roleName = role === 'admin' ? '管理员' : '普通用户';
-        const confirmed = await this.showConfirm(
-            '确认修改角色',
-            `确定要将用户角色设置为${roleName}吗？`
-        );
-
-        if (!confirmed) return;
-
         try {
             const result = await AdminAPI.users.update(userId, { role });
 
@@ -312,13 +301,6 @@ const Users = {
 
     // 删除用户
     async deleteUser(userId) {
-        const confirmed = await this.showConfirm(
-            '确认删除用户',
-            '确定要删除这个用户吗？此操作将删除用户的所有数据，包括消息和文件，且不可撤销。'
-        );
-
-        if (!confirmed) return;
-
         try {
             const result = await AdminAPI.users.delete(userId);
 
@@ -365,6 +347,13 @@ const Users = {
             const messageEl = document.getElementById('confirmMessage');
             const cancelBtn = document.getElementById('confirmCancel');
             const okBtn = document.getElementById('confirmOk');
+
+            // 检查元素是否存在
+            if (!modal || !titleEl || !messageEl || !cancelBtn || !okBtn) {
+                console.error('确认对话框元素未找到');
+                resolve(false);
+                return;
+            }
 
             titleEl.textContent = title;
             messageEl.textContent = message;

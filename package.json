@@ -1,6 +1,6 @@
 {
   "name": "wxchat",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "微信文件传输助手Web应用 - 模块化设计",
   "main": "worker/index.js",
   "scripts": {

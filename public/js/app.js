@@ -141,11 +141,9 @@ class WeChatApp {
     
     // 清理应用数据
     clearData() {
-        if (confirm('确定要清除所有本地数据吗？这将删除设备ID等信息。')) {
-            localStorage.clear();
-            console.log('🗑️ 本地数据已清除');
-            this.restart();
-        }
+        localStorage.clear();
+        console.log('🗑️ 本地数据已清除');
+        this.restart();
     }
 }
 

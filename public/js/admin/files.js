@@ -341,13 +341,6 @@ const Files = {
 
     // 删除文件
     async deleteFile(fileId) {
-        const confirmed = await this.showConfirm(
-            '确认删除',
-            '确定要删除这个文件吗？此操作不可撤销。'
-        );
-
-        if (!confirmed) return;
-
         try {
             const result = await AdminAPI.files.delete(fileId);
 
@@ -369,13 +362,6 @@ const Files = {
             Auth.showNotification('请选择要删除的文件', 'warning');
             return;
         }
-
-        const confirmed = await this.showConfirm(
-            '确认批量删除',
-            `确定要删除选中的 ${this.selectedFiles.size} 个文件吗？此操作不可撤销。`
-        );
-
-        if (!confirmed) return;
 
         try {
             const fileIds = Array.from(this.selectedFiles);
@@ -418,6 +404,13 @@ const Files = {
             const messageEl = document.getElementById('confirmMessage');
             const cancelBtn = document.getElementById('confirmCancel');
             const okBtn = document.getElementById('confirmOk');
+
+            // 检查元素是否存在
+            if (!modal || !titleEl || !messageEl || !cancelBtn || !okBtn) {
+                console.error('确认对话框元素未找到');
+                resolve(false);
+                return;
+            }
 
             titleEl.textContent = title;
             messageEl.textContent = message;

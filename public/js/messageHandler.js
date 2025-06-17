@@ -147,14 +147,6 @@ const MessageHandler = {
         // 清空输入框
         UI.clearInput();
 
-        // 显示确认对话框
-        const userConfirmed = confirm(CONFIG.CLEAR.CONFIRM_MESSAGE);
-
-        if (!userConfirmed) {
-            UI.showError(CONFIG.ERRORS.CLEAR_CANCELLED);
-            return;
-        }
-
         // 获取用户输入的确认码
         const confirmCode = prompt('请输入确认码：');
 

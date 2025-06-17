@@ -15,7 +15,7 @@ const CONFIG = {
     
     // 文件上传配置
     FILE: {
-        MAX_SIZE: 10 * 1024 * 1024, // 10MB
+        MAX_SIZE: 1024 * 1024 * 1024, // 1GB (1024MB)
         ALLOWED_TYPES: '*', // 允许所有类型
         CHUNK_SIZE: 1024 * 1024 // 1MB chunks (如果需要分片上传)
     },
@@ -71,7 +71,7 @@ const CONFIG = {
     // 错误消息
     ERRORS: {
         NETWORK: '网络连接失败，请检查网络',
-        FILE_TOO_LARGE: '文件大小不能超过10MB',
+        FILE_TOO_LARGE: '文件大小不能超过1GB',
         FILE_UPLOAD_FAILED: '文件上传失败',
         MESSAGE_SEND_FAILED: '消息发送失败',
         LOAD_MESSAGES_FAILED: '加载消息失败',

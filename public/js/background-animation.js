@@ -180,9 +180,9 @@ const dynamicStyles = `
 `;
 
 // 添加样式到页面
-const styleSheet = document.createElement('style');
-styleSheet.textContent = dynamicStyles;
-document.head.appendChild(styleSheet);
+const backgroundStyleSheet = document.createElement('style');
+backgroundStyleSheet.textContent = dynamicStyles;
+document.head.appendChild(backgroundStyleSheet);
 
 // 页面加载完成后初始化背景动画
 document.addEventListener('DOMContentLoaded', () => {

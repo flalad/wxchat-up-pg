@@ -1,0 +1,365 @@
+/* 苹果风格窗口样式 */
+
+/* 全局背景 */
+body {
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+}
+
+/* 改进的动态背景 */
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg, 
+        #667eea 0%, 
+        #764ba2 25%, 
+        #f093fb 50%, 
+        #f5576c 75%, 
+        #4facfe 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 渐变球体 */
+.gradient-sphere {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.7;
+    animation: float 20s infinite ease-in-out;
+}
+
+.sphere-1 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,107,107,0.8) 0%, rgba(255,107,107,0.2) 70%);
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.sphere-2 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(78,205,196,0.8) 0%, rgba(78,205,196,0.2) 70%);
+    top: 60%;
+    right: 15%;
+    animation-delay: -5s;
+}
+
+.sphere-3 {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(199,121,208,0.8) 0%, rgba(199,121,208,0.2) 70%);
+    bottom: 20%;
+    left: 20%;
+    animation-delay: -10s;
+}
+
+.sphere-4 {
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(255,195,113,0.8) 0%, rgba(255,195,113,0.2) 70%);
+    top: 30%;
+    right: 40%;
+    animation-delay: -15s;
+}
+
+.sphere-5 {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(142,158,171,0.8) 0%, rgba(142,158,171,0.2) 70%);
+    bottom: 40%;
+    right: 30%;
+    animation-delay: -7s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) scale(1);
+    }
+    25% {
+        transform: translateY(-20px) translateX(10px) scale(1.1);
+    }
+    50% {
+        transform: translateY(-10px) translateX(-15px) scale(0.9);
+    }
+    75% {
+        transform: translateY(-30px) translateX(5px) scale(1.05);
+    }
+}
+
+/* 浮动粒子 */
+.floating-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.floating-particles .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: particleFloat 25s infinite linear;
+}
+
+.floating-particles .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.floating-particles .particle:nth-child(2) { left: 20%; animation-delay: -3s; }
+.floating-particles .particle:nth-child(3) { left: 30%; animation-delay: -6s; }
+.floating-particles .particle:nth-child(4) { left: 40%; animation-delay: -9s; }
+.floating-particles .particle:nth-child(5) { left: 50%; animation-delay: -12s; }
+.floating-particles .particle:nth-child(6) { left: 60%; animation-delay: -15s; }
+.floating-particles .particle:nth-child(7) { left: 70%; animation-delay: -18s; }
+.floating-particles .particle:nth-child(8) { left: 80%; animation-delay: -21s; }
+
+@keyframes particleFloat {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 光线效果 */
+.light-rays {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.ray {
+    position: absolute;
+    width: 2px;
+    height: 100px;
+    background: linear-gradient(to bottom, 
+        rgba(255, 255, 255, 0.8) 0%, 
+        rgba(255, 255, 255, 0.4) 50%, 
+        rgba(255, 255, 255, 0) 100%);
+    animation: rayMove 12s infinite ease-in-out;
+}
+
+.ray:nth-child(1) {
+    left: 25%;
+    animation-delay: 0s;
+}
+
+.ray:nth-child(2) {
+    left: 50%;
+    animation-delay: -4s;
+}
+
+.ray:nth-child(3) {
+    left: 75%;
+    animation-delay: -8s;
+}
+
+@keyframes rayMove {
+    0%, 100% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg);
+        opacity: 1;
+    }
+}
+
+/* 窗口容器 */
+.window-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    position: relative;
+    min-height: calc(100vh - 40px);
+}
+
+/* 窗口标题栏 */
+.window-titlebar {
+    background: rgba(246, 246, 246, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    position: relative;
+}
+
+/* 窗口控制按钮 */
+.window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.control-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.control-btn.close {
+    background: #ff5f57;
+}
+
+.control-btn.minimize {
+    background: #ffbd2e;
+}
+
+.control-btn.maximize {
+    background: #28ca42;
+}
+
+.control-btn:hover {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+}
+
+/* 窗口标题 */
+.window-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    user-select: none;
+}
+
+/* 窗口操作区域 */
+.window-actions {
+    display: flex;
+    align-items: center;
+}
+
+.window-actions .admin-login-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    border-radius: 6px;
+    color: #007aff;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.window-actions .admin-login-btn:hover {
+    background: rgba(0, 122, 255, 0.2);
+    border-color: rgba(0, 122, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+.window-actions .admin-login-btn svg {
+    flex-shrink: 0;
+}
+
+/* 应用主体区域调整 */
+.app {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 84px); /* 减去窗口标题栏和外边距 */
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+.app::before {
+    display: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .window-container {
+        min-height: calc(100vh - 20px);
+        border-radius: 8px;
+    }
+    
+    .window-titlebar {
+        height: 40px;
+        padding: 0 12px;
+    }
+    
+    .window-title {
+        font-size: 13px;
+    }
+    
+    .control-btn {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .app {
+        height: calc(100vh - 60px);
+    }
+    
+    /* 移动端隐藏一些背景效果以提升性能 */
+    .gradient-sphere {
+        display: none;
+    }
+    
+    .light-rays {
+        display: none;
+    }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+    .window-titlebar {
+        background: rgba(40, 40, 40, 0.8);
+        border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .window-title {
+        color: #fff;
+    }
+    
+    .window-container {
+        background: rgba(30, 30, 30, 0.95);
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+}

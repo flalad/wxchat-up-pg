@@ -28,12 +28,18 @@ class WeChatApp {
             this.deviceId = Utils.getDeviceId();
             console.log('📱 设备ID:', this.deviceId);
             
-            // 请求通知权限
-            await Utils.requestNotificationPermission();
+            // 延迟请求通知权限，避免在页面加载时弹窗
+            // Utils.requestNotificationPermission() 将在用户首次交互时调用
             
             // 初始化各个模块
             UI.init();
-            FileUpload.init();
+            
+            // 确保 FileUpload 已定义
+            if (typeof FileUpload !== 'undefined') {
+                FileUpload.init();
+            } else {
+                console.warn('⚠️ FileUpload 模块未加载，文件上传功能可能不可用');
+            }
 
             // 设置初始连接状态
             UI.setConnectionStatus(navigator.onLine ? 'connected' : 'disconnected');
@@ -165,23 +171,23 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // 导出到全局作用域（用于调试）
 window.WeChatApp = app;
-window.CONFIG = CONFIG;
-window.Utils = Utils;
-window.API = API;
-window.UI = UI;
-window.FileUpload = FileUpload;
-window.MessageHandler = MessageHandler;
+if (typeof CONFIG !== 'undefined') window.CONFIG = CONFIG;
+if (typeof Utils !== 'undefined') window.Utils = Utils;
+if (typeof API !== 'undefined') window.API = API;
+if (typeof UI !== 'undefined') window.UI = UI;
+if (typeof FileUpload !== 'undefined') window.FileUpload = FileUpload;
+if (typeof MessageHandler !== 'undefined') window.MessageHandler = MessageHandler;
 
 // 开发模式下的调试信息
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
     console.log('🔧 开发模式已启用');
-    console.log('可用的全局对象:', {
-        WeChatApp: app,
-        CONFIG,
-        Utils,
-        API,
-        UI,
-        FileUpload,
-        MessageHandler
-    });
+    const availableObjects = { WeChatApp: app };
+    if (typeof CONFIG !== 'undefined') availableObjects.CONFIG = CONFIG;
+    if (typeof Utils !== 'undefined') availableObjects.Utils = Utils;
+    if (typeof API !== 'undefined') availableObjects.API = API;
+    if (typeof UI !== 'undefined') availableObjects.UI = UI;
+    if (typeof FileUpload !== 'undefined') availableObjects.FileUpload = FileUpload;
+    if (typeof MessageHandler !== 'undefined') availableObjects.MessageHandler = MessageHandler;
+    
+    console.log('可用的全局对象:', availableObjects);
 }

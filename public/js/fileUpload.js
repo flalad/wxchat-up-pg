@@ -609,6 +609,6 @@ const uploadStyles = `
 `;
 
 // 动态添加样式
-const styleSheet = document.createElement('style');
-styleSheet.textContent = uploadStyles;
-document.head.appendChild(styleSheet);
+const uploadStyleSheet = document.createElement('style');
+uploadStyleSheet.textContent = uploadStyles;
+document.head.appendChild(uploadStyleSheet);

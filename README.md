@@ -174,16 +174,17 @@ npx wrangler login
 # 4️⃣ 一键设置数据库和存储
 npm run setup
 
-# 5️⃣ 配置管理员环境变量（必需）
+# 5️⃣ 创建 Pages 项目
+npm run pages:create
+
+# 6️⃣ 部署到 Pages
+npm run pages:deploy
+
+# 7️⃣ 超简单管理员设置（必需）
 # 在 Cloudflare Dashboard 中设置环境变量：
 # ADMIN_USERNAME=your_admin_username
 # ADMIN_PASSWORD=your_secure_password
-
-# 6️⃣ 创建 Pages 项目
-npm run pages:create
-
-# 7️⃣ 部署到 Pages
-npm run pages:deploy
+# 然后重新部署，直接用这些凭据登录即可！
 ```
 
 #### ⚡ 方式二：Cloudflare Workers
@@ -198,17 +199,25 @@ npm run pages:deploy
 npm run deploy
 ```
 
-### 🎯 部署后配置
+### 🎯 超简单管理员设置
+
+**🚀 三步搞定管理员设置：**
+
+1. **设置环境变量**: 在 Cloudflare Pages 项目中设置 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD`
+2. **重新部署**: 点击重新部署按钮让环境变量生效
+3. **直接登录**: 访问 `/admin.html`，用设置的凭据直接登录即可！
+
+> 💡 **就是这么简单！** 系统会在首次登录时自动创建管理员账户，无需复杂的初始化步骤。
+
+**📖 详细指南**: 查看 [`SIMPLE_ADMIN_SETUP.md`](SIMPLE_ADMIN_SETUP.md) 获取完整的三步设置指南。
+
+### 🎯 其他配置
 
 1. **访问应用**: 使用 Cloudflare 提供的域名访问
-2. **管理后台**: 访问 `/admin.html` 进入管理后台
-3. **环境变量配置**: 必须设置 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD`
-4. **安全配置**:
+2. **安全配置**:
    - 使用强密码（建议12位以上，包含大小写字母、数字和特殊字符）
    - 定期更换管理员密码
-5. **自定义域名**: 在 Cloudflare Dashboard 中绑定自定义域名
-
-> 🚨 **重要安全更新**: v2.2.0 版本移除了默认管理员账户，必须通过环境变量设置管理员凭据！
+3. **自定义域名**: 在 Cloudflare Dashboard 中绑定自定义域名
 
 ## 🔧 部署指南
 
@@ -311,9 +320,9 @@ bucket_name = "wxchat"
 #### 登录管理后台
 1. 访问 `/admin.html`
 2. 使用环境变量中配置的管理员凭据登录
-3. 如果未设置环境变量，系统会提示错误
+3. 系统会自动创建管理员账户（如果不存在）
 
-> 💡 **重要变更**: v2.2.0 版本不再支持默认管理员账户，必须通过环境变量配置！
+> 💡 **超简单**: 只需设置环境变量，重新部署，然后直接登录！无需复杂的初始化步骤。
 
 #### 主要功能
 - 📊 **仪表板** - 查看系统统计和图表，全新玻璃态设计
@@ -530,6 +539,7 @@ ui: UI/UX 改进
 
 ## 📚 文档
 
+- 🚀 [**超简单管理员设置指南**](SIMPLE_ADMIN_SETUP.md) - **推荐阅读**
 - 📖 [数据库设置指南](DATABASE_SETUP.md)
 - 🔧 [手动 D1 数据库创建](MANUAL_D1_SETUP.md)
 - 🔐 [管理后台设置指南 v2.2.0](ADMIN_SETUP_GUIDE_V2.md)

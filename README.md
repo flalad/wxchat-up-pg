@@ -194,7 +194,6 @@ npm run deploy
 3. **默认账户**: 用户名 `admin`，密码 `admin123`（可通过环境变量自定义）
 4. **安全配置**:
    - 修改 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD` 环境变量
-   - 更新 `JWT_SECRET` 为强随机字符串
 5. **自定义域名**: 在 Cloudflare Dashboard 中绑定自定义域名
 
 > ⚠️ **重要**: 生产环境部署后，请立即修改默认的管理员用户名和密码！
@@ -236,7 +235,6 @@ compatibility_date = "2025-06-17"
 [vars]
 ADMIN_USERNAME = "admin"              # 默认管理员用户名
 ADMIN_PASSWORD = "admin123"           # 默认管理员密码
-JWT_SECRET = "your-jwt-secret-key"    # JWT 密钥（生产环境请修改）
 
 [[d1_databases]]
 binding = "DB"
@@ -259,7 +257,6 @@ pages_build_output_dir = "./public"
 ENVIRONMENT = "production"
 ADMIN_USERNAME = "admin"              # 默认管理员用户名
 ADMIN_PASSWORD = "admin123"           # 默认管理员密码
-JWT_SECRET = "your-jwt-secret-key"    # JWT 密钥（生产环境请修改）
 
 [[d1_databases]]
 binding = "DB"
@@ -277,13 +274,12 @@ bucket_name = "wxchat"
 |--------|--------|------|----------|
 | `ADMIN_USERNAME` | `admin` | 默认管理员用户名 | ✅ 必需 |
 | `ADMIN_PASSWORD` | `admin123` | 默认管理员密码 | ✅ 必需 |
-| `JWT_SECRET` | `your-jwt-secret-key` | JWT 令牌签名密钥 | ✅ 必需 |
 | `ENVIRONMENT` | `production` | 运行环境标识 | ❌ 可选 |
 
 > ⚠️ **安全提醒**:
 > - 生产环境中请务必修改默认的管理员用户名和密码
-> - JWT_SECRET 应设置为强随机字符串
 > - 建议定期更换管理员密码
+> - 当前使用会话ID认证机制，无需JWT配置
 
 ## 📱 使用指南
 
@@ -393,8 +389,8 @@ npm run pages:dev       # Pages 本地开发
 
 ## 🔐 安全特性
 
-- 🔒 **密码加密** - bcrypt 哈希加密
-- 🎫 **JWT 认证** - 安全的会话管理
+- 🔒 **密码加密** - SHA-256 哈希加密
+- 🎫 **会话认证** - 安全的会话ID管理
 - 🛡️ **CORS 保护** - 跨域请求保护
 - 🔍 **输入验证** - 严格的数据验证
 - 📝 **操作日志** - 完整的审计日志

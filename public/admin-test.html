@@ -3,23 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="微信文件传输助手管理后台 - 现代化的数据管理平台">
-    <meta name="keywords" content="微信,文件传输,管理后台,数据统计">
-    <title>微信文件传输助手 - 管理后台</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
-    
-    <!-- Stylesheets -->
+    <title>管理后台测试</title>
     <link rel="stylesheet" href="css/reset.css?v=5">
     <link rel="stylesheet" href="css/admin-premium.css?v=1">
-    
-    <!-- External Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
-    
-    <!-- Preload critical resources -->
-    <link rel="preload" href="css/admin.css" as="style">
-    <link rel="preload" href="js/admin/app.js" as="script">
 </head>
 <body>
     <!-- 登录模态框 -->
@@ -66,50 +52,6 @@
                         </p>
                     </div>
                 </form>
-                
-                <!-- 注册表单 -->
-                <form id="registerForm" style="display: none;">
-                    <div class="login-header">
-                        <div class="login-icon">✨</div>
-                        <h2>用户注册</h2>
-                        <p class="login-subtitle">创建您的管理员账户</p>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="regUsername">
-                            <span class="label-icon">👤</span>
-                            用户名
-                        </label>
-                        <input type="text" id="regUsername" name="username" required
-                               placeholder="请输入用户名" autocomplete="username">
-                    </div>
-                    <div class="form-group">
-                        <label for="regPassword">
-                            <span class="label-icon">🔒</span>
-                            密码
-                        </label>
-                        <input type="password" id="regPassword" name="password" required
-                               placeholder="请输入密码" autocomplete="new-password">
-                    </div>
-                    <div class="form-group">
-                        <label for="regEmail">
-                            <span class="label-icon">📧</span>
-                            邮箱（可选）
-                        </label>
-                        <input type="email" id="regEmail" name="email"
-                               placeholder="请输入邮箱地址" autocomplete="email">
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <span class="btn-icon">🎉</span>
-                            创建账户
-                        </button>
-                        <button type="button" id="showLogin" class="btn btn-link">
-                            已有账户？立即登录
-                        </button>
-                    </div>
-                </form>
-                
             </div>
         </div>
     </div>
@@ -123,7 +65,7 @@
                     <div class="logo-icon">📊</div>
                     <div class="logo-text">
                         <h1>微信文件传输助手</h1>
-                        <span class="logo-subtitle">管理后台</span>
+                        <span class="logo-subtitle">管理后台 v2.2.0</span>
                     </div>
                 </div>
             </div>
@@ -223,6 +165,7 @@
                             </li>
                         </ul>
                     </div>
+                    
                     <div class="nav-footer">
                         <div class="system-status">
                             <div class="status-indicator online"></div>
@@ -246,45 +189,33 @@
 
                     <!-- 统计卡片 -->
                     <div class="stats-grid">
-                        <div class="stat-card">
+                        <div class="stat-card hover-lift">
                             <div class="stat-icon">👥</div>
                             <div class="stat-content">
-                                <h3 id="totalUsers">0</h3>
+                                <h3 id="totalUsers">1,234</h3>
                                 <p>总用户数</p>
                             </div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card hover-lift">
                             <div class="stat-icon">💬</div>
                             <div class="stat-content">
-                                <h3 id="totalMessages">0</h3>
+                                <h3 id="totalMessages">5,678</h3>
                                 <p>总消息数</p>
                             </div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card hover-lift">
                             <div class="stat-icon">📁</div>
                             <div class="stat-content">
-                                <h3 id="totalFiles">0</h3>
+                                <h3 id="totalFiles">2,345</h3>
                                 <p>总文件数</p>
                             </div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card hover-lift">
                             <div class="stat-icon">💾</div>
                             <div class="stat-content">
-                                <h3 id="totalStorage">0 MB</h3>
+                                <h3 id="totalStorage">1.2 GB</h3>
                                 <p>存储使用</p>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 图表区域 -->
-                    <div class="charts-grid">
-                        <div class="chart-container">
-                            <h3>最近7天活动统计</h3>
-                            <canvas id="activityChart"></canvas>
-                        </div>
-                        <div class="chart-container">
-                            <h3>文件类型分布</h3>
-                            <canvas id="fileTypeChart"></canvas>
                         </div>
                     </div>
 
@@ -298,123 +229,32 @@
                                         <th>用户名</th>
                                         <th>注册时间</th>
                                         <th>最后登录</th>
+                                        <th>状态</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+                                    <tr>
+                                        <td>user123</td>
+                                        <td>2024-01-15 10:30</td>
+                                        <td>2024-01-18 14:20</td>
+                                        <td><span class="status-badge status-active">活跃</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>testuser</td>
+                                        <td>2024-01-14 09:15</td>
+                                        <td>2024-01-17 16:45</td>
+                                        <td><span class="status-badge status-active">活跃</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>demo_user</td>
+                                        <td>2024-01-13 15:22</td>
+                                        <td>从未登录</td>
+                                        <td><span class="status-badge status-inactive">未激活</span></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
-
-                <!-- 信息管理页面 -->
-                <div id="messagesPage" class="page">
-                    <div class="page-header">
-                        <h2>信息管理</h2>
-                        <div class="page-actions">
-                            <input type="text" id="messageSearch" placeholder="搜索消息...">
-                            <select id="messageTypeFilter">
-                                <option value="">所有类型</option>
-                                <option value="text">文本消息</option>
-                                <option value="file">文件消息</option>
-                            </select>
-                            <button id="refreshMessages" class="btn btn-primary">刷新</button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table id="messagesTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>类型</th>
-                                    <th>内容</th>
-                                    <th>用户</th>
-                                    <th>设备</th>
-                                    <th>时间</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <div id="messagesPagination" class="pagination"></div>
-                </div>
-
-                <!-- 文件管理页面 -->
-                <div id="filesPage" class="page">
-                    <div class="page-header">
-                        <h2>文件管理</h2>
-                        <div class="page-actions">
-                            <input type="text" id="fileSearch" placeholder="搜索文件...">
-                            <select id="fileTypeFilter">
-                                <option value="">所有类型</option>
-                                <option value="image/">图片</option>
-                                <option value="video/">视频</option>
-                                <option value="audio/">音频</option>
-                                <option value="application/pdf">PDF</option>
-                            </select>
-                            <button id="refreshFiles" class="btn btn-primary">刷新</button>
-                            <button id="batchDeleteFiles" class="btn btn-danger">批量删除</button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table id="filesTable">
-                            <thead>
-                                <tr>
-                                    <th><input type="checkbox" id="selectAllFiles"></th>
-                                    <th>文件名</th>
-                                    <th>大小</th>
-                                    <th>类型</th>
-                                    <th>用户</th>
-                                    <th>下载次数</th>
-                                    <th>上传时间</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <div id="filesPagination" class="pagination"></div>
-                </div>
-
-                <!-- 用户管理页面 -->
-                <div id="usersPage" class="page">
-                    <div class="page-header">
-                        <h2>用户管理</h2>
-                        <div class="page-actions">
-                            <input type="text" id="userSearch" placeholder="搜索用户...">
-                            <select id="userRoleFilter">
-                                <option value="">所有角色</option>
-                                <option value="admin">管理员</option>
-                                <option value="user">普通用户</option>
-                            </select>
-                            <select id="userStatusFilter">
-                                <option value="">所有状态</option>
-                                <option value="true">活跃</option>
-                                <option value="false">禁用</option>
-                            </select>
-                            <button id="refreshUsers" class="btn btn-primary">刷新</button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table id="usersTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>用户名</th>
-                                    <th>邮箱</th>
-                                    <th>角色</th>
-                                    <th>状态</th>
-                                    <th>消息数</th>
-                                    <th>文件数</th>
-                                    <th>注册时间</th>
-                                    <th>最后登录</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <div id="usersPagination" class="pagination"></div>
                 </div>
             </main>
         </div>
@@ -423,13 +263,43 @@
     <!-- 通知容器 -->
     <div id="notifications"></div>
 
-
-    <script src="js/admin/auth.js?v=4"></script>
-    <script src="js/admin/api.js?v=4"></script>
-    <script src="js/admin/dashboard.js?v=4"></script>
-    <script src="js/admin/messages.js?v=4"></script>
-    <script src="js/admin/files.js?v=4"></script>
-    <script src="js/admin/users.js?v=4"></script>
-    <script src="js/admin/app.js?v=4"></script>
+    <script>
+        // 简单的测试脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示主界面，隐藏登录框
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('adminApp').style.display = 'block';
+            
+            // 添加一些交互效果
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 测试通知
+            setTimeout(() => {
+                showNotification('欢迎使用全新的管理后台界面！', 'success');
+            }, 1000);
+        });
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            const container = document.getElementById('notifications');
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

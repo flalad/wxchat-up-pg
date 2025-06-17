@@ -85,6 +85,17 @@ npm run build:pages
    R2 bucket: wxchat
    ```
 
+#### 配置管理员环境变量（v2.2.0+）
+
+1. 在 **"Environment variables"** 部分点击 **"Add variable"**
+2. 添加以下变量：
+   ```
+   ADMIN_USERNAME = your_admin_username
+   ADMIN_PASSWORD = your_secure_password
+   ```
+
+> ⚠️ **重要**: 从 v2.2.0 开始，必须设置这些环境变量才能访问管理后台
+
 ### 步骤 6：部署项目
 
 1. 如果是 Git 连接：推送代码到仓库会自动触发部署

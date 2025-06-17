@@ -2,7 +2,21 @@
 export async function onRequestPost(context) {
   try {
     const { env } = context
-    const { DB, ADMIN_USERNAME = 'admin', ADMIN_PASSWORD = 'admin123' } = env
+    const { DB, ADMIN_USERNAME, ADMIN_PASSWORD } = env
+
+    // 检查环境变量是否设置
+    if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: '请在环境变量中设置 ADMIN_USERNAME 和 ADMIN_PASSWORD'
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+    }
 
     // 检查是否已有管理员账户
     const existingAdminStmt = DB.prepare(`
@@ -45,7 +59,7 @@ export async function onRequestPost(context) {
       data: {
         message: '管理员账户初始化成功',
         username: ADMIN_USERNAME,
-        note: '请及时修改默认密码'
+        note: '管理员账户已创建，请妥善保管登录凭据'
       }
     }), {
       headers: {

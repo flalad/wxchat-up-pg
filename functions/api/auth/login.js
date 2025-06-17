@@ -114,11 +114,15 @@ export async function onRequestOptions() {
   })
 }
 
-// 简化的密码验证函数
+// 密码验证函数
 async function verifyPassword(password, hash) {
-  // 这里应该使用bcrypt等安全的密码哈希库
-  // 为了演示，使用简单的比较（实际项目中不要这样做）
-  return password === 'admin123' && hash === '$2b$10$rQZ8kHp.TB.It.NuiNdxaOFvAiEKs.Tu/1B3Oa.xtMRZg5cT6/7.2'
+  // 使用相同的哈希算法验证密码
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password + 'salt_wxchat_2025')
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const computedHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return computedHash === hash
 }
 
 // 生成会话ID

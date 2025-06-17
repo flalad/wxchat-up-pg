@@ -197,18 +197,31 @@ CREATE TABLE admin_logs (
 );
 ```
 
-## 🔐 默认数据
+## 🔐 管理员账户设置
 
-系统会自动创建一个默认管理员账户：
+**从 v2.2.0 开始，系统不再使用默认管理员账户。**
 
-```sql
-INSERT INTO users (username, password_hash, role) VALUES 
-('admin', '$2b$10$rQZ8kHp.TB.It.NuiNdxaOFvAiEKs.Tu/1B3Oa.xtMRZg5cT6/7.2', 'admin');
+### 环境变量配置
+
+在部署前，您必须设置以下环境变量：
+
+```bash
+# 管理员用户名（必需）
+ADMIN_USERNAME=your_admin_username
+
+# 管理员密码（必需）
+ADMIN_PASSWORD=your_secure_password
 ```
 
-- **用户名**: admin
-- **密码**: admin123
-- **角色**: 管理员
+### 管理员账户初始化
+
+设置环境变量后，系统会在首次访问时自动创建管理员账户。您也可以通过访问以下API手动初始化：
+
+```
+POST /api/auth/init-admin
+```
+
+> ⚠️ **安全提示**: 请使用强密码，包含大小写字母、数字和特殊字符！
 
 ## 🔄 数据库关系扩展
 

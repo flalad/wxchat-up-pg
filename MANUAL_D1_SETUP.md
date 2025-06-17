@@ -184,9 +184,9 @@ INSERT OR IGNORE INTO devices (id, name) VALUES
 ```
 
 ```sql
--- 插入默认管理员账户（密码：admin123）
-INSERT OR IGNORE INTO users (username, password_hash, role) VALUES 
-('admin', '$2b$10$rQZ8kHp.TB.It.NuiNdxaOFvAiEKs.Tu/1B3Oa.xtMRZg5cT6/7.2', 'admin');
+-- 注意：从 v2.2.0 开始，不再插入默认管理员账户
+-- 管理员账户将通过环境变量在首次访问时自动创建
+-- 请确保在部署前设置 ADMIN_USERNAME 和 ADMIN_PASSWORD 环境变量
 ```
 
 ### 步骤10：验证表创建

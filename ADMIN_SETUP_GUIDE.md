@@ -48,15 +48,28 @@ npm run pages:deploy
 
 ## 🔐 管理员账户
 
-### 默认管理员账户
+### 环境变量配置（v2.2.0+）
 
-系统会自动创建一个默认管理员账户：
+**从 v2.2.0 开始，系统不再使用默认管理员账户。您必须通过环境变量设置管理员凭据。**
 
-- **用户名**: `admin`
-- **密码**: `admin123`
-- **角色**: 管理员
+#### 设置环境变量
 
-> ⚠️ **重要安全提示**: 首次登录后请立即修改默认密码！
+**Cloudflare Pages 设置方法：**
+1. 登录 Cloudflare Dashboard
+2. 进入您的 Pages 项目
+3. 转到 Settings > Environment variables
+4. 添加以下变量：
+   - `ADMIN_USERNAME`: 您的管理员用户名
+   - `ADMIN_PASSWORD`: 您的安全密码
+
+**本地开发设置方法：**
+在项目根目录创建 `.dev.vars` 文件：
+```bash
+ADMIN_USERNAME=your_admin_username
+ADMIN_PASSWORD=your_secure_password
+```
+
+> ⚠️ **重要安全提示**: 请使用强密码，包含大小写字母、数字和特殊字符！
 
 ### 创建新管理员
 
@@ -121,13 +134,13 @@ npm run pages:deploy
 
 ## 🔧 高级配置
 
-### 自定义管理员密码
+### 修改管理员密码
 
-如果需要修改默认管理员密码，可以：
+如果需要修改管理员密码：
 
-1. 登录管理后台
-2. 在用户管理中找到admin用户
-3. 或者直接在数据库中更新密码哈希
+1. 更新环境变量中的 `ADMIN_PASSWORD`
+2. 重新部署项目
+3. 使用新密码登录管理后台
 
 ### 批量操作
 

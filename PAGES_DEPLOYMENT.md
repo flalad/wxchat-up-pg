@@ -64,6 +64,13 @@ wxchat-main/
 - **Variable name**: `R2`
 - **R2 bucket**: `wxchat`
 
+### 管理员环境变量（v2.2.0+）
+在 Settings > Environment variables 中添加：
+- **ADMIN_USERNAME**: 管理员用户名
+- **ADMIN_PASSWORD**: 管理员密码
+
+> ⚠️ **重要**: 从 v2.2.0 开始，必须设置管理员环境变量才能访问管理后台
+
 ## API 路由映射
 
 Pages Functions 会自动映射以下路由：

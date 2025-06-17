@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Cloudflare%20Workers%20%7C%20Pages-orange.svg)
 ![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen.svg)
@@ -34,21 +34,23 @@
 - 🎭 **主题适配** - 自动适配系统暗色/亮色主题
 - ⚡ **性能优化** - 智能动画控制和资源管理
 
-### 🔐 管理后台 2.0
-- 👤 **用户认证** - 完整的登录注册系统
+### 🔐 管理后台 3.0 - 全新升级
+- 🔒 **安全认证** - 强制环境变量配置，移除默认账户
+- 🎨 **高级UI设计** - 玻璃态效果，现代化界面设计
 - 📊 **数据仪表板** - 实时统计和可视化图表
 - 💬 **信息管理** - 查看、搜索、删除用户消息
 - 📁 **文件管理** - 批量管理文件，支持下载和删除
 - 👥 **用户管理** - 管理用户账户、角色和权限
 - 📈 **统计分析** - 活动趋势和数据分布分析
-- 🎨 **现代化界面** - 专业级管理后台设计
 - ⚡ **流畅操作** - 去除繁琐确认弹窗，操作更高效
+- 🌈 **动态背景** - 渐变动画背景，视觉体验升级
+- 📱 **完全响应式** - 移动端和桌面端完美适配
 
 ## 🛠️ 技术栈
 
 ### 前端技术
 - **核心框架**: 原生 HTML5 + CSS3 + ES6+ JavaScript
-- **设计系统**: 模块化 CSS，玻璃态效果
+- **设计系统**: 模块化 CSS，玻璃态效果，现代化设计语言
 - **动画引擎**: CSS3 动画 + JavaScript 控制
 - **图表库**: Chart.js 数据可视化
 - **响应式**: 移动优先的响应式设计
@@ -58,7 +60,7 @@
 - **框架**: Hono (轻量级 Web 框架)
 - **数据库**: Cloudflare D1 (SQLite)
 - **文件存储**: Cloudflare R2 (S3兼容)
-- **认证**: JWT + bcrypt 密码加密
+- **认证**: 会话ID + SHA-256 密码加密
 
 ### 部署平台
 - **Workers 模式**: 全球边缘计算部署
@@ -75,6 +77,7 @@
 ├── 📄 wrangler.toml                # ⚙️ Workers 配置
 ├── 📄 wrangler-pages.toml          # ⚙️ Pages 配置
 ├── 📄 setup-database.js            # 🔧 一键数据库设置脚本
+├── 📄 ADMIN_SETUP_GUIDE_V2.md      # 🔐 新版管理后台设置指南
 │
 ├── 📁 database/                    # 🗄️ 数据库相关
 │   ├── 📄 schema.sql               # 🏗️ 基础数据库结构
@@ -83,11 +86,13 @@
 ├── 📁 public/                      # 🎨 前端资源
 │   ├── 📄 index.html               # 🏠 主应用页面
 │   ├── 📄 admin.html               # 🔐 管理后台页面
+│   ├── 📄 admin-test.html          # 🧪 管理后台测试页面
 │   │
 │   ├── 📁 css/                     # 🎨 样式文件
 │   │   ├── 📄 reset.css            # 🔄 CSS 重置
 │   │   ├── 📄 main.css             # 🎯 主应用样式
-│   │   ├── 📄 admin.css            # 🔐 管理后台样式
+│   │   ├── 📄 admin.css            # 🔐 管理后台基础样式
+│   │   ├── 📄 admin-premium.css    # ✨ 高级管理后台样式（新）
 │   │   ├── 📄 admin-enhanced.css   # ✨ 管理后台增强样式
 │   │   ├── 📄 animated-background.css # 🌈 动态背景样式
 │   │   ├── 📄 components.css       # 🧩 组件样式库
@@ -96,6 +101,7 @@
 │   └── 📁 js/                      # ⚡ JavaScript 模块
 │       ├── 📄 app.js               # 🚀 主应用入口
 │       ├── 📄 background-animation.js # 🌈 背景动画控制
+│       ├── 📄 enhanced-background.js # 🌈 增强背景动画
 │       ├── 📄 config.js            # ⚙️ 应用配置
 │       ├── 📄 utils.js             # 🛠️ 工具函数
 │       ├── 📄 api.js               # 🌐 API 接口封装
@@ -119,7 +125,8 @@
 │       ├── 📄 clear-all.js         # 🧹 清理 API
 │       ├── 📁 auth/                # 🔐 认证 API
 │       │   ├── 📄 login.js         # 🔑 登录
-│       │   └── 📄 register.js      # 📝 注册
+│       │   ├── 📄 register.js      # 📝 注册
+│       │   └── 📄 init-admin.js    # 🔧 管理员初始化（已更新）
 │       ├── 📁 admin/               # 🔐 管理后台 API
 │       │   ├── 📄 dashboard.js     # 📊 仪表板数据
 │       │   ├── 📄 messages.js      # 💬 消息管理
@@ -136,7 +143,8 @@
 └── 📁 docs/                        # 📚 文档
     ├── 📄 DATABASE_SETUP.md        # 🗄️ 数据库设置指南
     ├── 📄 MANUAL_D1_SETUP.md       # 🔧 手动数据库创建指南
-    ├── 📄 ADMIN_SETUP_GUIDE.md     # 🔐 管理后台设置指南
+    ├── 📄 ADMIN_SETUP_GUIDE.md     # 🔐 旧版管理后台设置指南
+    ├── 📄 ADMIN_SETUP_GUIDE_V2.md  # 🔐 新版管理后台设置指南
     └── 📄 MIGRATION_GUIDE.md       # 🔄 迁移指南
 ```
 
@@ -166,8 +174,10 @@ npx wrangler login
 # 4️⃣ 一键设置数据库和存储
 npm run setup
 
-# 5️⃣ 配置环境变量（可选）
-# 编辑 wrangler-pages.toml 中的 ADMIN_USERNAME 和 ADMIN_PASSWORD
+# 5️⃣ 配置管理员环境变量（必需）
+# 在 Cloudflare Dashboard 中设置环境变量：
+# ADMIN_USERNAME=your_admin_username
+# ADMIN_PASSWORD=your_secure_password
 
 # 6️⃣ 创建 Pages 项目
 npm run pages:create
@@ -181,7 +191,7 @@ npm run pages:deploy
 ```bash
 # 前面步骤 1-4 相同
 
-# 5️⃣ 配置环境变量（可选）
+# 5️⃣ 配置环境变量（必需）
 # 编辑 wrangler.toml 中的 ADMIN_USERNAME 和 ADMIN_PASSWORD
 
 # 6️⃣ 部署到 Workers
@@ -192,12 +202,13 @@ npm run deploy
 
 1. **访问应用**: 使用 Cloudflare 提供的域名访问
 2. **管理后台**: 访问 `/admin.html` 进入管理后台
-3. **默认账户**: 用户名 `admin`，密码 `admin123`（可通过环境变量自定义）
+3. **环境变量配置**: 必须设置 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD`
 4. **安全配置**:
-   - 修改 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD` 环境变量
+   - 使用强密码（建议12位以上，包含大小写字母、数字和特殊字符）
+   - 定期更换管理员密码
 5. **自定义域名**: 在 Cloudflare Dashboard 中绑定自定义域名
 
-> ⚠️ **重要**: 生产环境部署后，请立即修改默认的管理员用户名和密码！
+> 🚨 **重要安全更新**: v2.2.0 版本移除了默认管理员账户，必须通过环境变量设置管理员凭据！
 
 ## 🔧 部署指南
 
@@ -223,6 +234,7 @@ npm run db:init-all
 详细设置指南：
 - 📖 [数据库设置完整指南](DATABASE_SETUP.md)
 - 🔧 [手动 D1 数据库创建指南](MANUAL_D1_SETUP.md)
+- 🔐 [新版管理后台设置指南](ADMIN_SETUP_GUIDE_V2.md)
 
 ### ⚙️ 配置文件
 
@@ -232,10 +244,10 @@ name = "wxchat"
 main = "worker/index.js"
 compatibility_date = "2025-06-17"
 
-# 环境变量配置
+# 环境变量配置（必需）
 [vars]
-ADMIN_USERNAME = "admin"              # 默认管理员用户名
-ADMIN_PASSWORD = "admin123"           # 默认管理员密码
+ADMIN_USERNAME = "your_admin_username"    # 管理员用户名
+ADMIN_PASSWORD = "your_secure_password"   # 管理员密码
 
 [[d1_databases]]
 binding = "DB"
@@ -253,11 +265,11 @@ name = "wxchat-pages"
 compatibility_date = "2025-06-17"
 pages_build_output_dir = "./public"
 
-# 环境变量配置
+# 环境变量配置（必需）
 [vars]
 ENVIRONMENT = "production"
-ADMIN_USERNAME = "admin"              # 默认管理员用户名
-ADMIN_PASSWORD = "admin123"           # 默认管理员密码
+ADMIN_USERNAME = "your_admin_username"    # 管理员用户名
+ADMIN_PASSWORD = "your_secure_password"   # 管理员密码
 
 [[d1_databases]]
 binding = "DB"
@@ -271,16 +283,17 @@ bucket_name = "wxchat"
 
 ### 🔐 环境变量说明
 
-| 变量名 | 默认值 | 说明 | 是否必需 |
-|--------|--------|------|----------|
-| `ADMIN_USERNAME` | `admin` | 默认管理员用户名 | ✅ 必需 |
-| `ADMIN_PASSWORD` | `admin123` | 默认管理员密码 | ✅ 必需 |
-| `ENVIRONMENT` | `production` | 运行环境标识 | ❌ 可选 |
+| 变量名 | 说明 | 是否必需 | 安全建议 |
+|--------|------|----------|----------|
+| `ADMIN_USERNAME` | 管理员用户名 | ✅ 必需 | 避免使用常见用户名 |
+| `ADMIN_PASSWORD` | 管理员密码 | ✅ 必需 | 12位以上强密码 |
+| `ENVIRONMENT` | 运行环境标识 | ❌ 可选 | 用于区分环境 |
 
-> ⚠️ **安全提醒**:
-> - 生产环境中请务必修改默认的管理员用户名和密码
-> - 建议定期更换管理员密码
-> - 当前使用会话ID认证机制，无需JWT配置
+> 🔒 **安全要求**:
+> - 必须设置 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD` 环境变量
+> - 密码建议包含大小写字母、数字和特殊字符
+> - 定期更换管理员密码
+> - 不要在代码中硬编码凭据
 
 ## 📱 使用指南
 
@@ -297,20 +310,26 @@ bucket_name = "wxchat"
 
 #### 登录管理后台
 1. 访问 `/admin.html`
-2. 使用默认账户登录：
-   - 用户名：`admin`（可通过 `ADMIN_USERNAME` 环境变量自定义）
-   - 密码：`admin123`（可通过 `ADMIN_PASSWORD` 环境变量自定义）
+2. 使用环境变量中配置的管理员凭据登录
+3. 如果未设置环境变量，系统会提示错误
 
-> 💡 **提示**: 默认管理员账户通过环境变量 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD` 配置，生产环境请务必修改默认值。
+> 💡 **重要变更**: v2.2.0 版本不再支持默认管理员账户，必须通过环境变量配置！
 
 #### 主要功能
-- 📊 **仪表板** - 查看系统统计和图表
-- 💬 **信息管理** - 管理所有用户消息
-- 📁 **文件管理** - 批量管理上传的文件
-- 👥 **用户管理** - 管理用户账户和权限
+- 📊 **仪表板** - 查看系统统计和图表，全新玻璃态设计
+- 💬 **信息管理** - 管理所有用户消息，支持高级搜索
+- 📁 **文件管理** - 批量管理上传的文件，支持预览
+- 👥 **用户管理** - 管理用户账户和权限，实时状态更新
+
+#### 🎨 界面升级亮点
+- ✨ **玻璃态设计** - 现代化半透明效果
+- 🌈 **动态渐变背景** - 自动变化的渐变动画
+- 💫 **流畅动画** - 60fps 平滑过渡效果
+- 📱 **完全响应式** - 移动端和桌面端完美适配
+- 🎯 **智能交互** - 悬浮效果和智能反馈
 
 #### 🚀 用户体验优化
-- ⚡ **一键操作** - 删除、修改等操作无需确认弹窗，直接执行
+- ⚡ **一键操作** - 删除、修改等操作无需确认弹窗
 - 🎯 **智能反馈** - 操作完成后显示清晰的成功/失败提示
 - 🔄 **自动刷新** - 操作后自动更新数据，保持界面同步
 - 💨 **流畅交互** - 去除繁琐的确认步骤，提升操作效率
@@ -340,6 +359,12 @@ clear all
 - **响应式布局** - 完美适配各种设备
 - **主题适配** - 自动适配系统主题
 
+### 🎨 管理后台 3.0 设计语言
+- **高级玻璃态** - 多层次透明效果
+- **渐变动画背景** - 自动变化的色彩
+- **现代化组件** - 统一的设计系统
+- **智能布局** - 自适应的界面结构
+
 ## 🔧 开发指南
 
 ### 🛠️ 本地开发
@@ -351,6 +376,11 @@ cd wxchat
 
 # 安装依赖
 npm install
+
+# 配置本地环境变量
+# 创建 .dev.vars 文件：
+echo "ADMIN_USERNAME=local_admin" > .dev.vars
+echo "ADMIN_PASSWORD=LocalDev@2024!" >> .dev.vars
 
 # 本地开发 (Pages 模式)
 npm run pages:dev
@@ -396,13 +426,13 @@ npm run pages:dev       # Pages 本地开发
 
 ## 🔐 安全特性
 
-- 🔒 **密码加密** - SHA-256 哈希加密
+- 🔒 **强制环境变量** - 移除默认账户，强制配置
 - 🎫 **会话认证** - 安全的会话ID管理
 - 🛡️ **CORS 保护** - 跨域请求保护
 - 🔍 **输入验证** - 严格的数据验证
 - 📝 **操作日志** - 完整的审计日志
 - ⚙️ **环境变量配置** - 敏感信息通过环境变量管理
-- 🔐 **默认账户保护** - 支持自定义管理员凭据
+- 🔐 **密码加密** - SHA-256 哈希加密
 
 ## 📈 性能优化
 
@@ -411,6 +441,7 @@ npm run pages:dev       # Pages 本地开发
 - 🎯 **懒加载** - 按需加载资源
 - 💾 **智能缓存** - 多层缓存策略
 - 📱 **移动优化** - 移动端性能优化
+- 🎨 **CSS 优化** - 模块化样式系统
 
 ## 🌍 浏览器支持
 
@@ -421,6 +452,40 @@ npm run pages:dev       # Pages 本地开发
 | Safari | 13+ | ✅ 完全支持 |
 | Edge | 80+ | ✅ 完全支持 |
 | 移动浏览器 | 现代版本 | ✅ 完全支持 |
+
+## 🆕 版本更新
+
+### v2.2.0 - 管理后台 3.0 重大升级 🎉
+
+#### 🔒 安全改进
+- ✅ 移除默认管理员账户
+- ✅ 强制使用环境变量配置管理员凭据
+- ✅ 增强密码安全要求
+- ✅ 改进认证流程
+
+#### 🎨 UI/UX 全面升级
+- ✅ 全新玻璃态设计语言
+- ✅ 动态渐变背景动画
+- ✅ 现代化组件系统
+- ✅ 流畅的交互动画
+- ✅ 完全响应式设计
+
+#### 🐛 问题修复
+- ✅ 修复侧边栏布局问题
+- ✅ 优化移动端适配
+- ✅ 改进性能表现
+- ✅ 修复各种UI细节
+
+#### 📚 文档更新
+- ✅ 新增 v2.2.0 设置指南
+- ✅ 更新部署文档
+- ✅ 完善安全配置说明
+
+### v2.1.0
+- 新增现代化UI设计
+- 改进响应式布局
+- 增强数据可视化
+- 优化性能表现
 
 ## 🤝 贡献指南
 
@@ -433,6 +498,10 @@ cd wxchat
 
 # 安装依赖
 npm install
+
+# 配置本地环境变量
+echo "ADMIN_USERNAME=dev_admin" > .dev.vars
+echo "ADMIN_PASSWORD=DevPassword@2024!" >> .dev.vars
 
 # 创建功能分支
 git checkout -b feature/your-feature-name
@@ -455,15 +524,17 @@ style: 代码格式
 refactor: 重构
 test: 测试相关
 chore: 构建过程或辅助工具的变动
+security: 安全相关更新
+ui: UI/UX 改进
 ```
 
 ## 📚 文档
 
 - 📖 [数据库设置指南](DATABASE_SETUP.md)
 - 🔧 [手动 D1 数据库创建](MANUAL_D1_SETUP.md)
-- 🔐 [管理后台设置指南](ADMIN_SETUP_GUIDE.md)
+- 🔐 [管理后台设置指南 v2.2.0](ADMIN_SETUP_GUIDE_V2.md)
+- 🔐 [旧版管理后台设置指南](ADMIN_SETUP_GUIDE.md)
 - 🔄 [版本迁移指南](MIGRATION_GUIDE.md)
-- 📄 [API 文档](docs/API.md)
 
 ## 🐛 问题反馈
 

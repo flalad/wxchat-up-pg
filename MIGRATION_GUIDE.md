@@ -17,6 +17,9 @@
    - ✅ [`functions/api/files/download/[r2Key].js`](functions/api/files/download/[r2Key].js) - 文件下载 API
    - ✅ [`functions/api/sync.js`](functions/api/sync.js) - 设备同步 API
    - ✅ [`functions/api/clear-all.js`](functions/api/clear-all.js) - 数据清理 API
+   - ✅ **管理后台 API** - 完整的管理后台功能
+     - [`functions/api/auth/`](functions/api/auth/) - 认证相关 API
+     - [`functions/api/admin/`](functions/api/admin/) - 管理功能 API
 
 2. **配置文件更新**
    - ✅ [`wrangler-pages.toml`](wrangler-pages.toml) - Pages 专用配置
@@ -110,6 +113,12 @@ functions/api/ (模块化)
 ### R2 存储桶绑定
 - **Variable name**: `R2`
 - **R2 bucket**: `wxchat`
+
+### 管理员环境变量（v2.2.0+）
+- **ADMIN_USERNAME**: 管理员用户名
+- **ADMIN_PASSWORD**: 管理员密码
+
+> ⚠️ **重要**: 管理后台功能需要设置管理员环境变量
 
 ## 🌟 Pages 部署的优势
 

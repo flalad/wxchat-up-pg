@@ -30,7 +30,7 @@ export async function onRequestGet(context) {
     // 今日统计（仅文本消息/文件）
     const todayStatsStmt = DB.prepare(`
       SELECT
-        (SELECT COUNT(*) FROM messages WHERE type = 'text' AND DATE(created_at) = DATE('now')) as today_messages,
+        (SELECT COUNT(*) FROM messages WHERE type = 'text' AND DATE(timestamp) = DATE('now')) as today_messages,
         (SELECT COUNT(*) FROM files WHERE DATE(created_at) = DATE('now')) as today_files
     `)
     const todayStats = await todayStatsStmt.first()

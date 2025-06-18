@@ -56,8 +56,8 @@ export async function onRequestPost(context) {
   try {
     const { env, request } = context
     const { DB } = env
-    const { content, deviceId } = await request.json()
-
+    const { content, deviceId, userId } = await request.json()
+ 
     if (!content || !deviceId) {
       return new Response(JSON.stringify({
         success: false,
@@ -70,14 +70,23 @@ export async function onRequestPost(context) {
         }
       })
     }
-
-    const stmt = DB.prepare(`
-      INSERT INTO messages (type, content, device_id)
-      VALUES (?, ?, ?)
-    `)
-
-    const result = await stmt.bind('text', content, deviceId).run()
-
+ 
+    // 支持写入 user_id 字段（如有）
+    let stmt, result;
+    if (userId) {
+      stmt = DB.prepare(`
+        INSERT INTO messages (type, content, device_id, user_id)
+        VALUES (?, ?, ?, ?)
+      `)
+      result = await stmt.bind('text', content, deviceId, userId).run()
+    } else {
+      stmt = DB.prepare(`
+        INSERT INTO messages (type, content, device_id)
+        VALUES (?, ?, ?)
+      `)
+      result = await stmt.bind('text', content, deviceId).run()
+    }
+ 
     return new Response(JSON.stringify({
       success: true,
       data: { id: result.meta.last_row_id }

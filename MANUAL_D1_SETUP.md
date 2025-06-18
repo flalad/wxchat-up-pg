@@ -172,6 +172,41 @@ CREATE INDEX IF NOT EXISTS idx_admin_logs_created_at ON admin_logs(created_at DE
 CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages(user_id);
 CREATE INDEX IF NOT EXISTS idx_files_user_id ON files(user_id);
 CREATE INDEX IF NOT EXISTS idx_devices_user_id ON devices(user_id);
+### 步骤9：创建统计视图
+
+```sql
+-- 用户统计视图
+CREATE VIEW IF NOT EXISTS user_stats AS
+SELECT 
+    u.id,
+    u.username,
+    u.role,
+    u.created_at,
+    u.last_login,
+    COUNT(DISTINCT m.id) as message_count,
+    COUNT(DISTINCT f.id) as file_count,
+    COALESCE(SUM(f.file_size), 0) as total_file_size,
+    COUNT(DISTINCT d.id) as device_count
+FROM users u
+LEFT JOIN messages m ON u.id = m.user_id
+LEFT JOIN files f ON u.id = f.user_id
+LEFT JOIN devices d ON u.id = d.user_id
+GROUP BY u.id, u.username, u.role, u.created_at, u.last_login;
+
+-- 每日活动统计视图
+CREATE VIEW IF NOT EXISTS daily_activity AS
+SELECT 
+    DATE(created_at) as date,
+    COUNT(CASE WHEN type = 'text' THEN 1 END) as text_messages,
+    COUNT(CASE WHEN type = 'file' THEN 1 END) as file_messages,
+    COUNT(*) as total_messages
+FROM messages 
+WHERE created_at >= DATE('now', '-30 days')
+GROUP BY DATE(created_at)
+ORDER BY date DESC;
+```
+
+---
 ```
 
 ### 步骤9：插入默认数据

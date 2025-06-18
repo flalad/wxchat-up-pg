@@ -50,13 +50,13 @@ CREATE TABLE IF NOT EXISTS admin_logs (
 -- 为 messages 表添加用户关联（如果列不存在）
 -- 注意：SQLite 的 ALTER TABLE ADD COLUMN 在某些情况下可能失败
 -- 建议在初始化时检查列是否存在
--- ALTER TABLE messages ADD COLUMN user_id INTEGER REFERENCES users(id);
+ALTER TABLE messages ADD COLUMN user_id INTEGER REFERENCES users(id);
 
 -- 为 files 表添加用户关联（如果列不存在）
--- ALTER TABLE files ADD COLUMN user_id INTEGER REFERENCES users(id);
+ALTER TABLE files ADD COLUMN user_id INTEGER REFERENCES users(id);
 
 -- 为 devices 表添加用户关联（如果列不存在）
--- ALTER TABLE devices ADD COLUMN user_id INTEGER REFERENCES users(id);
+ALTER TABLE devices ADD COLUMN user_id INTEGER REFERENCES users(id);
 
 -- 如果需要添加这些列，请在数据库初始化脚本中处理
 -- 或者重新创建表结构

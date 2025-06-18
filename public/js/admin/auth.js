@@ -78,7 +78,12 @@ const Auth = {
                 localStorage.setItem('adminUserInfo', JSON.stringify(this.currentUser));
                 
                 this.showNotification('登录成功', 'success');
-                this.showAdminApp();
+                // 只有管理员能进后台，否则跳转前台
+                if (this.currentUser.role === 'admin') {
+                    this.showAdminApp();
+                } else {
+                    window.location.href = '/';
+                }
             } else {
                 this.showNotification(result.error || '登录失败', 'error');
             }
@@ -124,9 +129,11 @@ const Auth = {
             const result = await response.json();
 
             if (result.success) {
-                this.showNotification('注册成功，请登录', 'success');
-                this.showLoginForm();
-                
+                this.showNotification('注册成功，已为你跳转到前台', 'success');
+                // 注册成功直接跳转前台
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
                 // 清空注册表单
                 document.getElementById('registerForm').reset();
             } else {
@@ -170,6 +177,10 @@ const Auth = {
         // 检查是否为管理员
         if (this.currentUser.role !== 'admin') {
             this.showNotification('权限不足，需要管理员权限', 'error');
+            // 普通用户直接跳转前台
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
             this.handleLogout();
             return;
         }

@@ -54,7 +54,8 @@ const Messages = {
             const params = {
                 page: this.currentPage,
                 limit: this.pageSize,
-                ...this.filters
+                ...this.filters,
+                type: 'text' // 默认只显示文本消息
             };
 
             // 移除空值

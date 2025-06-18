@@ -16,56 +16,53 @@ export async function onRequestGet(context) {
       })
     }
 
-    // 获取总体统计数据
+    // 总体统计数据
     const totalStatsStmt = DB.prepare(`
-      SELECT 
+      SELECT
         (SELECT COUNT(*) FROM users WHERE is_active = 1) as total_users,
-        (SELECT COUNT(*) FROM messages) as total_messages,
+        (SELECT COUNT(*) FROM messages WHERE type = 'text') as total_messages,
         (SELECT COUNT(*) FROM files) as total_files,
         (SELECT COALESCE(SUM(file_size), 0) FROM files) as total_file_size,
         (SELECT COUNT(DISTINCT device_id) FROM messages) as active_devices
     `)
     const totalStats = await totalStatsStmt.first()
 
-    // 获取今日统计
+    // 今日统计（仅文本消息/文件）
     const todayStatsStmt = DB.prepare(`
-      SELECT 
-        COUNT(CASE WHEN type = 'text' THEN 1 END) as today_messages,
-        COUNT(CASE WHEN type = 'file' THEN 1 END) as today_files
-      FROM messages 
-      WHERE DATE(created_at) = DATE('now')
+      SELECT
+        (SELECT COUNT(*) FROM messages WHERE type = 'text' AND DATE(created_at) = DATE('now')) as today_messages,
+        (SELECT COUNT(*) FROM files WHERE DATE(created_at) = DATE('now')) as today_files
     `)
     const todayStats = await todayStatsStmt.first()
 
-    // 获取最近7天的活动数据
+    // 最近7天活动（用 daily_activity 视图）
     const weeklyActivityStmt = DB.prepare(`
-      SELECT 
-        DATE(created_at) as date,
-        COUNT(CASE WHEN type = 'text' THEN 1 END) as messages,
-        COUNT(CASE WHEN type = 'file' THEN 1 END) as files
-      FROM messages 
-      WHERE created_at >= DATE('now', '-7 days')
-      GROUP BY DATE(created_at)
+      SELECT
+        date,
+        text_messages as messages,
+        file_messages as files
+      FROM daily_activity
+      WHERE date >= DATE('now', '-7 days')
       ORDER BY date ASC
     `)
     const weeklyActivityResult = await weeklyActivityStmt.all()
     const weeklyActivity = weeklyActivityResult.results || []
 
-    // 获取最近注册的用户
+    // 最近注册用户
     const recentUsersStmt = DB.prepare(`
       SELECT username, created_at, last_login
-      FROM users 
+      FROM users
       WHERE is_active = 1
-      ORDER BY created_at DESC 
+      ORDER BY created_at DESC
       LIMIT 5
     `)
     const recentUsersResult = await recentUsersStmt.all()
     const recentUsers = recentUsersResult.results || []
 
-    // 获取文件类型统计
+    // 文件类型统计
     const fileTypesStmt = DB.prepare(`
-      SELECT 
-        CASE 
+      SELECT
+        CASE
           WHEN mime_type LIKE 'image/%' THEN '图片'
           WHEN mime_type LIKE 'video/%' THEN '视频'
           WHEN mime_type LIKE 'audio/%' THEN '音频'
@@ -82,9 +79,9 @@ export async function onRequestGet(context) {
     const fileTypesResult = await fileTypesStmt.all()
     const fileTypes = fileTypesResult.results || []
 
-    // 获取存储使用情况
+    // 存储使用情况
     const storageStmt = DB.prepare(`
-      SELECT 
+      SELECT
         COUNT(*) as file_count,
         SUM(file_size) as used_space,
         AVG(file_size) as avg_file_size,

@@ -90,6 +90,34 @@ export async function onRequestGet(context) {
     `)
     const storageInfo = await storageStmt.first()
 
+    // 添加调试查询
+    const debugQueriesStmt = DB.prepare(`
+      SELECT 'users表总数' as table_name, COUNT(*) as count FROM users;
+      SELECT 'messages表总数' as table_name, COUNT(*) as count FROM messages;
+      SELECT 'files表总数' as table_name, COUNT(*) as count FROM files;
+      SELECT 'messages表中文本消息' as table_name, COUNT(*) as count FROM messages WHERE type = 'text';
+    `)
+    const debugQueries = await debugQueriesStmt.all()
+    const debugResults = debugQueries.results || []
+
+    // 直接检查原始表数据（取少量样本）
+    const sampleMessagesStmt = DB.prepare(`
+      SELECT id, type, content, device_id, timestamp, created_at, user_id
+      FROM messages
+      ORDER BY timestamp DESC
+      LIMIT 5
+    `)
+    const sampleMessages = await sampleMessagesStmt.all()
+    const messagesSample = sampleMessages.results || []
+
+    const sampleUsersStmt = DB.prepare(`
+      SELECT id, username, role, is_active, created_at
+      FROM users
+      LIMIT 5
+    `)
+    const sampleUsers = await sampleUsersStmt.all()
+    const usersSample = sampleUsers.results || []
+
     return new Response(JSON.stringify({
       success: true,
       data: {
@@ -115,6 +143,18 @@ export async function onRequestGet(context) {
           // 假设总容量为10GB
           totalSpace: 10 * 1024 * 1024 * 1024,
           usagePercent: (storageInfo.used_space / (10 * 1024 * 1024 * 1024)) * 100
+        },
+        // 调试信息
+        debug: {
+          rawData: {
+            totalStats,
+            todayStats,
+            weeklyActivityResult,
+            storageInfo
+          },
+          debugQueries: debugResults,
+          messagesSample,
+          usersSample
         }
       }
     }), {

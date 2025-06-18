@@ -74,17 +74,35 @@ export async function onRequestPost(context) {
     // 支持写入 user_id 字段（如有）
     let stmt, result;
     if (userId) {
+      // 如果提供了userId，直接使用
       stmt = DB.prepare(`
         INSERT INTO messages (type, content, device_id, user_id)
         VALUES (?, ?, ?, ?)
       `)
       result = await stmt.bind('text', content, deviceId, userId).run()
     } else {
-      stmt = DB.prepare(`
-        INSERT INTO messages (type, content, device_id)
-        VALUES (?, ?, ?)
+      // 如果没有userId，查找或创建一个默认用户
+      const defaultUserStmt = DB.prepare(`
+        SELECT id FROM users WHERE username = 'default_user' LIMIT 1
       `)
-      result = await stmt.bind('text', content, deviceId).run()
+      let defaultUser = await defaultUserStmt.first()
+      
+      if (!defaultUser) {
+        // 创建默认用户
+        const createUserStmt = DB.prepare(`
+          INSERT INTO users (username, password_hash, role, is_active)
+          VALUES ('default_user', 'not_used', 'user', 1)
+        `)
+        const createResult = await createUserStmt.run()
+        defaultUser = { id: createResult.meta.last_row_id }
+      }
+      
+      // 关联到默认用户
+      stmt = DB.prepare(`
+        INSERT INTO messages (type, content, device_id, user_id)
+        VALUES (?, ?, ?, ?)
+      `)
+      result = await stmt.bind('text', content, deviceId, defaultUser.id).run()
     }
  
     return new Response(JSON.stringify({

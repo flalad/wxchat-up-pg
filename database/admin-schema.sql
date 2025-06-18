@@ -102,12 +102,12 @@ GROUP BY u.id, u.username, u.role, u.created_at, u.last_login;
 
 -- 创建视图用于每日统计
 CREATE VIEW IF NOT EXISTS daily_activity AS
-SELECT 
-    DATE(created_at) as date,
+SELECT
+    DATE(timestamp) as date,
     COUNT(CASE WHEN type = 'text' THEN 1 END) as text_messages,
     COUNT(CASE WHEN type = 'file' THEN 1 END) as file_messages,
     COUNT(*) as total_messages
-FROM messages 
-WHERE created_at >= DATE('now', '-30 days')
-GROUP BY DATE(created_at)
+FROM messages
+WHERE timestamp >= DATE('now', '-30 days')
+GROUP BY DATE(timestamp)
 ORDER BY date DESC;

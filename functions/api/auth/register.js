@@ -82,6 +82,29 @@ export async function onRequestPost(context) {
     `)
     await logStmt.bind(result.meta.last_row_id.toString(), `用户 ${username} 注册成功`).run()
 
+    // 用户注册成功后更新统计计数器
+    try {
+      // 更新用户总数计数器
+      const counterRequest = new Request(`${new URL(request.url).origin}/api/admin/stats-counter`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Counter-Auth': env.COUNTER_SECRET || 'internal-wxchat-counter'
+        },
+        body: JSON.stringify({
+          type: 'total_users',
+          count: 1,
+          mode: 'increment'
+        })
+      });
+      
+      // 异步发送请求，不等待响应
+      fetch(counterRequest).catch(err => console.error('更新用户计数失败:', err));
+    } catch (counterError) {
+      // 计数器更新失败不影响主流程
+      console.error('更新用户统计计数失败:', counterError);
+    }
+
     return new Response(JSON.stringify({
       success: true,
       data: {

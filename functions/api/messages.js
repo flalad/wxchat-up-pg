@@ -104,6 +104,46 @@ export async function onRequestPost(context) {
       `)
       result = await stmt.bind('text', content, deviceId, defaultUser.id).run()
     }
+    
+    // 消息发送成功后更新统计计数器
+    try {
+      // 创建内部API请求，更新消息计数
+      const counterRequest = new Request(`${new URL(request.url).origin}/api/admin/stats-counter`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Counter-Auth': env.COUNTER_SECRET || 'internal-wxchat-counter'
+        },
+        body: JSON.stringify({
+          type: 'total_messages',
+          count: 1,
+          mode: 'increment'
+        })
+      });
+      
+      // 异步发送请求，不等待响应
+      fetch(counterRequest).catch(err => console.error('更新消息计数失败:', err));
+      
+      // 同时更新今日消息计数
+      const todayCounterRequest = new Request(`${new URL(request.url).origin}/api/admin/stats-counter`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Counter-Auth': env.COUNTER_SECRET || 'internal-wxchat-counter'
+        },
+        body: JSON.stringify({
+          type: 'today_messages',
+          count: 1,
+          mode: 'increment'
+        })
+      });
+      
+      // 异步发送请求，不等待响应
+      fetch(todayCounterRequest).catch(err => console.error('更新今日消息计数失败:', err));
+    } catch (counterError) {
+      // 计数器更新失败不影响主流程
+      console.error('更新统计计数失败:', counterError);
+    }
  
     return new Response(JSON.stringify({
       success: true,

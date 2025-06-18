@@ -57,6 +57,63 @@ export async function onRequestPost(context) {
 
     await messageStmt.bind('file', fileResult.meta.last_row_id, deviceId).run()
 
+    // 文件上传成功后更新统计计数器
+    try {
+      // 更新文件总数计数器
+      const fileCountRequest = new Request(`${new URL(request.url).origin}/api/admin/stats-counter`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Counter-Auth': env.COUNTER_SECRET || 'internal-wxchat-counter'
+        },
+        body: JSON.stringify({
+          type: 'total_files',
+          count: 1,
+          mode: 'increment'
+        })
+      });
+      
+      // 异步发送请求，不等待响应
+      fetch(fileCountRequest).catch(err => console.error('更新文件计数失败:', err));
+      
+      // 更新文件大小计数器
+      const fileSizeRequest = new Request(`${new URL(request.url).origin}/api/admin/stats-counter`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Counter-Auth': env.COUNTER_SECRET || 'internal-wxchat-counter'
+        },
+        body: JSON.stringify({
+          type: 'total_file_size',
+          count: file.size,
+          mode: 'increment'
+        })
+      });
+      
+      // 异步发送请求，不等待响应
+      fetch(fileSizeRequest).catch(err => console.error('更新文件大小计数失败:', err));
+      
+      // 更新今日文件计数器
+      const todayFileRequest = new Request(`${new URL(request.url).origin}/api/admin/stats-counter`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Counter-Auth': env.COUNTER_SECRET || 'internal-wxchat-counter'
+        },
+        body: JSON.stringify({
+          type: 'today_files',
+          count: 1,
+          mode: 'increment'
+        })
+      });
+      
+      // 异步发送请求，不等待响应
+      fetch(todayFileRequest).catch(err => console.error('更新今日文件计数失败:', err));
+    } catch (counterError) {
+      // 计数器更新失败不影响主流程
+      console.error('更新文件统计计数失败:', counterError);
+    }
+
     return new Response(JSON.stringify({
       success: true,
       data: {

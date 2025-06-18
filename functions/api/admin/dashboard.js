@@ -1,8 +1,13 @@
 // 管理后台仪表板数据
 export async function onRequestGet(context) {
   try {
+    console.log('仪表板API请求开始');
     const { env, request } = context
     const { DB } = env
+    
+    // 诊断环境变量和数据库绑定
+    console.log('环境变量:', Object.keys(env));
+    console.log('数据库绑定状态:', DB ? '已绑定' : '未绑定');
 
     // 验证管理员权限
     const authResult = await verifyAdminAuth(request, DB)
@@ -16,24 +21,75 @@ export async function onRequestGet(context) {
       })
     }
 
-    // 总体统计数据
-    const totalStatsStmt = DB.prepare(`
-      SELECT
-        (SELECT COUNT(*) FROM users WHERE is_active = 1) as total_users,
-        (SELECT COUNT(*) FROM messages WHERE type = 'text') as total_messages,
-        (SELECT COUNT(*) FROM files) as total_files,
-        (SELECT COALESCE(SUM(file_size), 0) FROM files) as total_file_size,
-        (SELECT COUNT(DISTINCT device_id) FROM messages) as active_devices
-    `)
-    const totalStats = await totalStatsStmt.first()
-
-    // 今日统计（仅文本消息/文件）
-    const todayStatsStmt = DB.prepare(`
-      SELECT
-        (SELECT COUNT(*) FROM messages WHERE type = 'text' AND DATE(timestamp) = DATE('now')) as today_messages,
-        (SELECT COUNT(*) FROM files WHERE DATE(created_at) = DATE('now')) as today_files
-    `)
-    const todayStats = await todayStatsStmt.first()
+    // 从统计计数器服务获取数据
+    let totalStats = {
+      total_users: 0,
+      total_messages: 0,
+      total_files: 0,
+      total_file_size: 0,
+      active_devices: 0
+    };
+    let todayStats = {
+      today_messages: 0,
+      today_files: 0
+    };
+    
+    // 尝试从计数器服务获取统计数据
+    try {
+      console.log('从统计计数器服务获取数据...');
+      const counterUrl = `${new URL(request.url).origin}/api/admin/stats-counter`;
+      const counterResponse = await fetch(counterUrl, {
+        method: 'GET',
+        headers: {
+          Authorization: request.headers.get('Authorization')
+        }
+      });
+      
+      if (counterResponse.ok) {
+        const counterData = await counterResponse.json();
+        if (counterData.success && counterData.data) {
+          console.log('计数器服务返回数据:', counterData.data);
+          
+          // 更新统计数据
+          totalStats = {
+            total_users: counterData.data.total_users || 0,
+            total_messages: counterData.data.total_messages || 0,
+            total_files: counterData.data.total_files || 0,
+            total_file_size: counterData.data.total_file_size || 0,
+            active_devices: counterData.data.active_devices || 0
+          };
+          
+          todayStats = {
+            today_messages: counterData.data.today_messages || 0,
+            today_files: counterData.data.today_files || 0
+          };
+        } else {
+          console.warn('计数器服务返回无效数据:', counterData);
+        }
+      } else {
+        console.warn('计数器服务请求失败:', counterResponse.status);
+      }
+    } catch (counterError) {
+      console.error('计数器服务异常, 将使用数据库查询替代:', counterError);
+      
+      // 如果计数器服务失败，回退到数据库查询
+      const totalStatsStmt = DB.prepare(`
+        SELECT
+          (SELECT COUNT(*) FROM users WHERE is_active = 1) as total_users,
+          (SELECT COUNT(*) FROM messages WHERE type = 'text') as total_messages,
+          (SELECT COUNT(*) FROM files) as total_files,
+          (SELECT COALESCE(SUM(file_size), 0) FROM files) as total_file_size,
+          (SELECT COUNT(DISTINCT device_id) FROM messages) as active_devices
+      `);
+      totalStats = await totalStatsStmt.first() || totalStats;
+      
+      const todayStatsStmt = DB.prepare(`
+        SELECT
+          (SELECT COUNT(*) FROM messages WHERE type = 'text' AND DATE(timestamp) = DATE('now')) as today_messages,
+          (SELECT COUNT(*) FROM files WHERE DATE(created_at) = DATE('now')) as today_files
+      `);
+      todayStats = await todayStatsStmt.first() || todayStats;
+    }
 
     // 最近7天活动（用 daily_activity 视图）
     const weeklyActivityStmt = DB.prepare(`

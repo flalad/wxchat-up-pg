@@ -553,8 +553,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hash && ['dashboard', 'messages', 'files', 'users'].includes(hash)) {
         AdminApp.currentPage = hash;
     }
-    
-    // 初始化苹果风格增强
+
+    // 先初始化主应用（功能模块、事件绑定、页面切换等）
+    AdminApp.init();
+
+    // 再初始化苹果风格增强
     AdminApp.initAppleEnhancements();
 });
 

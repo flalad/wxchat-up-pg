@@ -378,11 +378,40 @@ const Users = {
 
     // 查看用户详情
     viewUserDetails(userId) {
-        // 这里可以实现用户详情查看功能
-        // 比如显示用户的详细信息、活动记录等
-        if (Auth && Auth.showNotification) {
-            Auth.showNotification('用户详情功能待实现', 'info');
+        // 直接在前端弹窗展示用户详细信息
+        const users = document.querySelectorAll('#usersTable tbody tr');
+        let userInfo = null;
+        users.forEach(row => {
+            if (row.children[0] && row.children[0].textContent == userId) {
+                userInfo = {
+                    id: row.children[0].textContent,
+                    username: row.children[1].textContent,
+                    email: row.children[2].textContent,
+                    role: row.children[3].textContent,
+                    status: row.children[4].textContent,
+                    messageCount: row.children[5].textContent,
+                    fileCount: row.children[6].textContent,
+                    createdAt: row.children[7].textContent,
+                    lastLogin: row.children[8].textContent
+                };
+            }
+        });
+        if (!userInfo) {
+            alert('未找到该用户信息');
+            return;
         }
+        const detail = `
+ID：${userInfo.id}
+用户名：${userInfo.username}
+邮箱：${userInfo.email}
+角色：${userInfo.role}
+状态：${userInfo.status}
+消息数：${userInfo.messageCount}
+文件数：${userInfo.fileCount}
+注册时间：${userInfo.createdAt}
+最后登录：${userInfo.lastLogin}
+        `;
+        alert(detail);
     },
 
     // 显示加载状态

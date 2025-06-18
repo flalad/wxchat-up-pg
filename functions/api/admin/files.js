@@ -74,7 +74,8 @@ export async function onRequestGet(context) {
       LIMIT ? OFFSET ?
     `)
 
-    const files = await filesStmt.bind(...params, limit, offset).all()
+    const filesResult = await filesStmt.bind(...params, limit, offset).all()
+    const files = filesResult.results || []
 
     // 获取总数和统计信息
     const statsStmt = DB.prepare(`
@@ -107,25 +108,26 @@ export async function onRequestGet(context) {
       GROUP BY file_type
       ORDER BY count DESC
     `)
-    const typeDistribution = await typeDistributionStmt.bind(...params).all()
+    const typeDistributionResult = await typeDistributionStmt.bind(...params).all()
+    const typeDistribution = typeDistributionResult.results || []
 
     return new Response(JSON.stringify({
       success: true,
       data: {
-        files: files.results,
+        files: files,
         pagination: {
           page,
           limit,
-          total: stats.total,
-          totalPages: Math.ceil(stats.total / limit)
+          total: stats.total || 0,
+          totalPages: Math.ceil((stats.total || 0) / limit)
         },
         stats: {
-          totalFiles: stats.total,
-          totalSize: stats.total_size,
-          avgSize: stats.avg_size,
-          maxSize: stats.max_size
+          totalFiles: stats.total || 0,
+          totalSize: stats.total_size || 0,
+          avgSize: stats.avg_size || 0,
+          maxSize: stats.max_size || 0
         },
-        typeDistribution: typeDistribution.results
+        typeDistribution: typeDistribution
       }
     }), {
       headers: {
@@ -154,7 +156,20 @@ export async function onRequestDelete(context) {
     const { env, request } = context
     const { DB, R2 } = env
     const url = new URL(request.url)
-    const fileId = url.pathname.split('/').pop()
+    const fileId = url.searchParams.get('fileId')
+
+    if (!fileId) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: '缺少文件ID参数'
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+    }
 
     // 验证管理员权限
     const authResult = await verifyAdminAuth(request, DB)

@@ -48,7 +48,8 @@ export async function onRequestGet(context) {
       GROUP BY DATE(created_at)
       ORDER BY date ASC
     `)
-    const weeklyActivity = await weeklyActivityStmt.all()
+    const weeklyActivityResult = await weeklyActivityStmt.all()
+    const weeklyActivity = weeklyActivityResult.results || []
 
     // 获取最近注册的用户
     const recentUsersStmt = DB.prepare(`
@@ -58,7 +59,8 @@ export async function onRequestGet(context) {
       ORDER BY created_at DESC 
       LIMIT 5
     `)
-    const recentUsers = await recentUsersStmt.all()
+    const recentUsersResult = await recentUsersStmt.all()
+    const recentUsers = recentUsersResult.results || []
 
     // 获取文件类型统计
     const fileTypesStmt = DB.prepare(`
@@ -77,7 +79,8 @@ export async function onRequestGet(context) {
       GROUP BY file_type
       ORDER BY count DESC
     `)
-    const fileTypes = await fileTypesStmt.all()
+    const fileTypesResult = await fileTypesStmt.all()
+    const fileTypes = fileTypesResult.results || []
 
     // 获取存储使用情况
     const storageStmt = DB.prepare(`
@@ -104,9 +107,9 @@ export async function onRequestGet(context) {
           messages: todayStats.today_messages,
           files: todayStats.today_files
         },
-        weeklyActivity: weeklyActivity.results || [],
-        recentUsers: recentUsers.results || [],
-        fileTypes: fileTypes.results || [],
+        weeklyActivity: weeklyActivity,
+        recentUsers: recentUsers,
+        fileTypes: fileTypes,
         storage: {
           fileCount: storageInfo.file_count,
           usedSpace: storageInfo.used_space,
@@ -125,9 +128,12 @@ export async function onRequestGet(context) {
     })
 
   } catch (error) {
+    // 增加详细错误日志，便于排查
+    console.error('仪表盘接口异常:', error && error.stack ? error.stack : error);
     return new Response(JSON.stringify({
       success: false,
-      error: error.message
+      error: error.message,
+      stack: error.stack || ''
     }), {
       status: 500,
       headers: {

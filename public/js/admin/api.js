@@ -162,7 +162,8 @@ const AdminAPI = {
         },
 
         async delete(userId) {
-            return AdminAPI.delete(`/api/admin/users?userId=${userId}`);
+            // 强制 userId 转字符串，避免类型不一致导致后端查不到
+            return AdminAPI.delete(`/api/admin/users?userId=${encodeURIComponent(String(userId))}`);
         }
     }
 };

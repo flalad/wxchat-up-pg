@@ -70,7 +70,8 @@ export async function onRequestGet(context) {
       LIMIT ? OFFSET ?
     `)
 
-    const users = await usersStmt.bind(...params, limit, offset).all()
+    const usersResult = await usersStmt.bind(...params, limit, offset).all()
+    const users = usersResult.results || []
 
     // 获取总数
     const countStmt = DB.prepare(`
@@ -79,6 +80,7 @@ export async function onRequestGet(context) {
       ${whereClause}
     `)
     const countResult = await countStmt.bind(...params).first()
+    const totalCount = countResult?.total || 0
 
     // 获取用户统计概览
     const statsStmt = DB.prepare(`
@@ -95,12 +97,12 @@ export async function onRequestGet(context) {
     return new Response(JSON.stringify({
       success: true,
       data: {
-        users: users.results || [],
+        users: users,
         pagination: {
           page,
           limit,
-          total: countResult.total || 0,
-          totalPages: Math.ceil((countResult.total || 0) / limit)
+          total: totalCount,
+          totalPages: Math.ceil(totalCount / limit)
         },
         stats: {
           totalUsers: stats.total_users || 0,
@@ -137,8 +139,20 @@ export async function onRequestPut(context) {
     const { env, request } = context
     const { DB } = env
     const url = new URL(request.url)
-    const userId = url.pathname.split('/').pop()
-    const { isActive, role } = await request.json()
+    const { userId, isActive, role } = await request.json()
+
+    if (!userId) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: '缺少用户ID参数'
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+    }
 
     // 验证管理员权限
     const authResult = await verifyAdminAuth(request, DB)
@@ -274,7 +288,20 @@ export async function onRequestDelete(context) {
     const { env, request } = context
     const { DB, R2 } = env
     const url = new URL(request.url)
-    const userId = url.pathname.split('/').pop()
+    const userId = url.searchParams.get('userId')
+
+    if (!userId) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: '缺少用户ID参数'
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+    }
 
     // 验证管理员权限
     const authResult = await verifyAdminAuth(request, DB)
@@ -321,10 +348,11 @@ export async function onRequestDelete(context) {
 
     // 获取用户的所有文件，准备删除R2中的文件
     const filesStmt = DB.prepare('SELECT r2_key FROM files WHERE user_id = ?')
-    const files = await filesStmt.bind(userId).all()
+    const filesResult = await filesStmt.bind(userId).all()
+    const files = filesResult.results || []
 
     // 删除R2中的文件
-    for (const file of files.results) {
+    for (const file of files) {
       try {
         await R2.delete(file.r2_key)
       } catch (error) {

@@ -69,7 +69,8 @@ export async function onRequestGet(context) {
       LIMIT ? OFFSET ?
     `)
 
-    const messages = await messagesStmt.bind(...params, limit, offset).all()
+    const messagesResult = await messagesStmt.bind(...params, limit, offset).all()
+    const messages = messagesResult.results || []
 
     // 获取总数
     const countStmt = DB.prepare(`
@@ -79,16 +80,17 @@ export async function onRequestGet(context) {
       ${whereClause}
     `)
     const countResult = await countStmt.bind(...params).first()
+    const totalCount = countResult?.total || 0
 
     return new Response(JSON.stringify({
       success: true,
       data: {
-        messages: messages.results,
+        messages: messages,
         pagination: {
           page,
           limit,
-          total: countResult.total,
-          totalPages: Math.ceil(countResult.total / limit)
+          total: totalCount,
+          totalPages: Math.ceil(totalCount / limit)
         }
       }
     }), {
@@ -118,7 +120,20 @@ export async function onRequestDelete(context) {
     const { env, request } = context
     const { DB } = env
     const url = new URL(request.url)
-    const messageId = url.pathname.split('/').pop()
+    const messageId = url.searchParams.get('messageId')
+
+    if (!messageId) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: '缺少消息ID参数'
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+    }
 
     // 验证管理员权限
     const authResult = await verifyAdminAuth(request, DB)

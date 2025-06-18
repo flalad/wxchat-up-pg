@@ -80,15 +80,16 @@ const Users = {
             const result = await AdminAPI.users.getList(params);
 
             if (result && result.success) {
-                this.renderUsers(result.data.users);
-                this.renderPagination(result.data.pagination);
-                this.updateStats(result.data.stats);
+                this.renderUsers(result.data.users || []);
+                this.renderPagination(result.data.pagination || {});
+                this.updateStats(result.data.stats || {});
             } else {
-                this.showError('加载用户失败');
+                console.error('加载用户失败:', result?.error);
+                this.showError(result?.error || '加载用户失败');
             }
         } catch (error) {
             console.error('加载用户失败:', error);
-            this.showError('加载用户失败');
+            this.showError('网络错误，请检查连接');
         }
     },
 
@@ -278,18 +279,26 @@ const Users = {
         }
 
         try {
-            Auth.showNotification(`正在${action}用户...`, 'info');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification(`正在${action}用户...`, 'info');
+            }
             const result = await AdminAPI.users.update(userId, { isActive });
 
             if (result && result.success) {
-                Auth.showNotification(`用户${action}成功`, 'success');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(`用户${action}成功`, 'success');
+                }
                 this.loadUsers();
             } else {
-                Auth.showNotification(result?.error || `${action}失败，请重试`, 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(result?.error || `${action}失败，请重试`, 'error');
+                }
             }
         } catch (error) {
             console.error(`${action}用户失败:`, error);
-            Auth.showNotification(`网络错误，${action}失败`, 'error');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification(`网络错误，${action}失败`, 'error');
+            }
         }
     },
 
@@ -308,18 +317,26 @@ const Users = {
         }
 
         try {
-            Auth.showNotification('正在修改用户角色...', 'info');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('正在修改用户角色...', 'info');
+            }
             const result = await AdminAPI.users.update(userId, { role });
 
             if (result && result.success) {
-                Auth.showNotification('用户角色修改成功', 'success');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification('用户角色修改成功', 'success');
+                }
                 this.loadUsers();
             } else {
-                Auth.showNotification(result?.error || '角色修改失败，请重试', 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(result?.error || '角色修改失败，请重试', 'error');
+                }
             }
         } catch (error) {
             console.error('修改用户角色失败:', error);
-            Auth.showNotification('网络错误，角色修改失败', 'error');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('网络错误，角色修改失败', 'error');
+            }
         }
     },
 
@@ -336,18 +353,26 @@ const Users = {
         }
 
         try {
-            Auth.showNotification('正在删除用户...', 'info');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('正在删除用户...', 'info');
+            }
             const result = await AdminAPI.users.delete(userId);
 
             if (result && result.success) {
-                Auth.showNotification('用户删除成功', 'success');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification('用户删除成功', 'success');
+                }
                 this.loadUsers();
             } else {
-                Auth.showNotification(result?.error || '删除失败，请重试', 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(result?.error || '删除失败，请重试', 'error');
+                }
             }
         } catch (error) {
             console.error('删除用户失败:', error);
-            Auth.showNotification('网络错误，请检查连接后重试', 'error');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('网络错误，请检查连接后重试', 'error');
+            }
         }
     },
 
@@ -355,7 +380,9 @@ const Users = {
     viewUserDetails(userId) {
         // 这里可以实现用户详情查看功能
         // 比如显示用户的详细信息、活动记录等
-        Auth.showNotification('用户详情功能待实现', 'info');
+        if (Auth && Auth.showNotification) {
+            Auth.showNotification('用户详情功能待实现', 'info');
+        }
     },
 
     // 显示加载状态

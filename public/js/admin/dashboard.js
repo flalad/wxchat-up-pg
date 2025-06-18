@@ -12,7 +12,7 @@ const Dashboard = {
         try {
             const result = await AdminAPI.dashboard.getData();
             
-            if (result && result.success) {
+            if (result && result.success && result.data) {
                 this.updateStats(result.data.totalStats || {});
                 this.updateTodayStats(result.data.todayStats || {});
                 this.createActivityChart(result.data.weeklyActivity || []);
@@ -24,12 +24,16 @@ const Dashboard = {
                 this.updateHeaderStats(result.data.totalStats || {});
             } else {
                 console.error('仪表板数据获取失败:', result?.error || '未知错误');
-                Auth.showNotification(result?.error || '加载数据失败', 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(result?.error || '加载数据失败', 'error');
+                }
                 this.showEmptyState();
             }
         } catch (error) {
             console.error('加载仪表板数据失败:', error);
-            Auth.showNotification('网络错误，请检查连接', 'error');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('网络错误，请检查连接', 'error');
+            }
             this.showEmptyState();
         }
     },

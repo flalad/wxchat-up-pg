@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台调试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f7;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .debug-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+        }
+        .debug-section h3 {
+            margin-top: 0;
+            color: #1d1d1f;
+        }
+        .test-button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .test-button.danger {
+            background: #ff3b30;
+        }
+        .test-button.danger:hover {
+            background: #d70015;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .result.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .login-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .login-form input {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-indicator.online {
+            background: #34c759;
+        }
+        .status-indicator.offline {
+            background: #ff3b30;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 管理后台调试页面</h1>
+        <p>此页面用于测试和调试管理后台的API接口问题</p>
+
+        <!-- 登录测试 -->
+        <div class="debug-section">
+            <h3>🔐 登录测试</h3>
+            <div class="login-form">
+                <input type="text" id="username" placeholder="用户名" value="admin">
+                <input type="password" id="password" placeholder="密码" value="">
+                <button class="test-button" onclick="testLogin()">测试登录</button>
+                <button class="test-button" onclick="testLogout()">退出登录</button>
+            </div>
+            <div>
+                <span class="status-indicator" id="authStatus"></span>
+                <span id="authStatusText">未登录</span>
+            </div>
+            <div id="loginResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- API测试 -->
+        <div class="debug-section">
+            <h3>📊 API接口测试</h3>
+            <button class="test-button" onclick="testDashboard()">测试仪表板</button>
+            <button class="test-button" onclick="testUsers()">测试用户列表</button>
+            <button class="test-button" onclick="testMessages()">测试消息列表</button>
+            <button class="test-button" onclick="testFiles()">测试文件列表</button>
+            <div id="apiResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 用户操作测试 -->
+        <div class="debug-section">
+            <h3>👥 用户操作测试</h3>
+            <div style="margin-bottom: 10px;">
+                <input type="number" id="testUserId" placeholder="用户ID" value="1">
+                <button class="test-button" onclick="testUserUpdate()">测试更新用户</button>
+                <button class="test-button danger" onclick="testUserDelete()">测试删除用户</button>
+            </div>
+            <div id="userOpResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 网络诊断 -->
+        <div class="debug-section">
+            <h3>🌐 网络诊断</h3>
+            <button class="test-button" onclick="testNetworkConnectivity()">测试网络连接</button>
+            <button class="test-button" onclick="testCORS()">测试CORS</button>
+            <button class="test-button" onclick="showNetworkInfo()">显示网络信息</button>
+            <div id="networkResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- 系统信息 -->
+        <div class="debug-section">
+            <h3>💻 系统信息</h3>
+            <button class="test-button" onclick="showSystemInfo()">显示系统信息</button>
+            <button class="test-button" onclick="showConsoleErrors()">显示控制台错误</button>
+            <div id="systemResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = null;
+        let consoleErrors = [];
+
+        // 捕获控制台错误
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            consoleErrors.push({
+                timestamp: new Date().toISOString(),
+                message: args.join(' ')
+            });
+            originalConsoleError.apply(console, args);
+        };
+
+        // 更新认证状态显示
+        function updateAuthStatus() {
+            const statusIndicator = document.getElementById('authStatus');
+            const statusText = document.getElementById('authStatusText');
+            
+            if (sessionId) {
+                statusIndicator.className = 'status-indicator online';
+                statusText.textContent = '已登录';
+            } else {
+                statusIndicator.className = 'status-indicator offline';
+                statusText.textContent = '未登录';
+            }
+        }
+
+        // 显示结果
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+        }
+
+        // API请求函数
+        async function apiRequest(url, options = {}) {
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            if (sessionId) {
+                defaultOptions.headers['Authorization'] = `Bearer ${sessionId}`;
+            }
+
+            const finalOptions = {
+                ...defaultOptions,
+                ...options,
+                headers: {
+                    ...defaultOptions.headers,
+                    ...options.headers
+                }
+            };
+
+            try {
+                const response = await fetch(url, finalOptions);
+                const result = await response.json();
+                
+                return {
+                    status: response.status,
+                    ok: response.ok,
+                    data: result
+                };
+            } catch (error) {
+                return {
+                    status: 0,
+                    ok: false,
+                    error: error.message
+                };
+            }
+        }
+
+        // 测试登录
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showResult('loginResult', '请输入用户名和密码', 'error');
+                return;
+            }
+
+            const result = await apiRequest('/api/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password })
+            });
+
+            if (result.ok && result.data.success) {
+                sessionId = result.data.data.sessionId;
+                updateAuthStatus();
+                showResult('loginResult', `登录成功！\n会话ID: ${sessionId}\n用户: ${result.data.data.user.username}\n角色: ${result.data.data.user.role}`, 'success');
+            } else {
+                showResult('loginResult', `登录失败！\n状态码: ${result.status}\n错误: ${result.data?.error || result.error || '未知错误'}`, 'error');
+            }
+        }
+
+        // 测试退出登录
+        function testLogout() {
+            sessionId = null;
+            updateAuthStatus();
+            showResult('loginResult', '已退出登录', 'info');
+        }
+
+        // 测试仪表板
+        async function testDashboard() {
+            if (!sessionId) {
+                showResult('apiResult', '请先登录', 'error');
+                return;
+            }
+
+            const result = await apiRequest('/api/admin/dashboard');
+            
+            if (result.ok && result.data.success) {
+                const stats = result.data.data.totalStats;
+                showResult('apiResult', `仪表板数据获取成功！\n用户数: ${stats.users}\n消息数: ${stats.messages}\n文件数: ${stats.files}\n存储: ${(stats.fileSize / 1024 / 1024).toFixed(2)} MB`, 'success');
+            } else {
+                showResult('apiResult', `仪表板数据获取失败！\n状态码: ${result.status}\n错误: ${result.data?.error || result.error || '未知错误'}`, 'error');
+            }
+        }
+
+        // 测试用户列表
+        async function testUsers() {
+            if (!sessionId) {
+                showResult('apiResult', '请先登录', 'error');
+                return;
+            }
+
+            const result = await apiRequest('/api/admin/users?page=1&limit=5');
+            
+            if (result.ok && result.data.success) {
+                const users = result.data.data.users;
+                const pagination = result.data.data.pagination;
+                showResult('apiResult', `用户列表获取成功！\n用户数量: ${users.length}\n总计: ${pagination.total}\n页数: ${pagination.totalPages}`, 'success');
+            } else {
+                showResult('apiResult', `用户列表获取失败！\n状态码: ${result.status}\n错误: ${result.data?.error || result.error || '未知错误'}`, 'error');
+            }
+        }
+
+        // 测试消息列表
+        async function testMessages() {
+            if (!sessionId) {
+                showResult('apiResult', '请先登录', 'error');
+                return;
+            }
+
+            const result = await apiRequest('/api/admin/messages?page=1&limit=5');
+            
+            if (result.ok && result.data.success) {
+                const messages = result.data.data.messages;
+                const pagination = result.data.data.pagination;
+                showResult('apiResult', `消息列表获取成功！\n消息数量: ${messages.length}\n总计: ${pagination.total}\n页数: ${pagination.totalPages}`, 'success');
+            } else {
+                showResult('apiResult', `消息列表获取失败！\n状态码: ${result.status}\n错误: ${result.data?.error || result.error || '未知错误'}`, 'error');
+            }
+        }
+
+        // 测试文件列表
+        async function testFiles() {
+            if (!sessionId) {
+                showResult('apiResult', '请先登录', 'error');
+                return;
+            }
+
+            const result = await apiRequest('/api/admin/files?page=1&limit=5');
+            
+            if (result.ok && result.data.success) {
+                const files = result.data.data.files;
+                const pagination = result.data.data.pagination;
+                showResult('apiResult', `文件列表获取成功！\n文件数量: ${files.length}\n总计: ${pagination.total}\n页数: ${pagination.totalPages}`, 'success');
+            } else {
+                showResult('apiResult', `文件列表获取失败！\n状态码: ${result.status}\n错误: ${result.data?.error || result.error || '未知错误'}`, 'error');
+            }
+        }
+
+        // 测试用户更新
+        async function testUserUpdate() {
+            if (!sessionId) {
+                showResult('userOpResult', '请先登录', 'error');
+                return;
+            }
+
+            const userId = document.getElementById('testUserId').value;
+            if (!userId) {
+                showResult('userOpResult', '请输入用户ID', 'error');
+                return;
+            }
+
+            const result = await apiRequest('/api/admin/users', {
+                method: 'PUT',
+                body: JSON.stringify({ 
+                    userId: parseInt(userId), 
+                    role: 'user' 
+                })
+            });
+            
+            if (result.ok && result.data.success) {
+                showResult('userOpResult', `用户更新成功！\n用户ID: ${userId}\n操作: 设为普通用户`, 'success');
+            } else {
+                showResult('userOpResult', `用户更新失败！\n状态码: ${result.status}\n错误: ${result.data?.error || result.error || '未知错误'}`, 'error');
+            }
+        }
+
+        // 测试用户删除
+        async function testUserDelete() {
+            if (!sessionId) {
+                showResult('userOpResult', '请先登录', 'error');
+                return;
+            }
+
+            const userId = document.getElementById('testUserId').value;
+            if (!userId) {
+                showResult('userOpResult', '请输入用户ID', 'error');
+                return;
+            }
+
+            if (!confirm(`确定要删除用户ID ${userId} 吗？这只是测试，请谨慎操作！`)) {
+                return;
+            }
+
+            const result = await apiRequest(`/api/admin/users?userId=${userId}`, {
+                method: 'DELETE'
+            });
+            
+            if (result.ok && result.data.success) {
+                showResult('userOpResult', `用户删除成功！\n用户ID: ${userId}`, 'success');
+            } else {
+                showResult('userOpResult', `用户删除失败！\n状态码: ${result.status}\n错误: ${result.data?.error || result.error || '未知错误'}`, 'error');
+            }
+        }
+
+        // 测试网络连接
+        async function testNetworkConnectivity() {
+            const tests = [
+                { name: '主页', url: '/' },
+                { name: '登录API', url: '/api/auth/login' },
+                { name: '仪表板API', url: '/api/admin/dashboard' }
+            ];
+
+            let results = [];
+            for (const test of tests) {
+                try {
+                    const start = Date.now();
+                    const response = await fetch(test.url, { method: 'HEAD' });
+                    const duration = Date.now() - start;
+                    results.push(`${test.name}: ${response.status} (${duration}ms)`);
+                } catch (error) {
+                    results.push(`${test.name}: 失败 - ${error.message}`);
+                }
+            }
+
+            showResult('networkResult', `网络连接测试结果：\n${results.join('\n')}`, 'info');
+        }
+
+        // 测试CORS
+        async function testCORS() {
+            try {
+                const response = await fetch('/api/admin/dashboard', {
+                    method: 'OPTIONS'
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                };
+
+                showResult('networkResult', `CORS测试结果：\n状态码: ${response.status}\n${Object.entries(corsHeaders).map(([k,v]) => `${k}: ${v || '未设置'}`).join('\n')}`, 'info');
+            } catch (error) {
+                showResult('networkResult', `CORS测试失败：${error.message}`, 'error');
+            }
+        }
+
+        // 显示网络信息
+        function showNetworkInfo() {
+            const info = {
+                'User Agent': navigator.userAgent,
+                '语言': navigator.language,
+                '平台': navigator.platform,
+                '在线状态': navigator.onLine ? '在线' : '离线',
+                '当前URL': window.location.href,
+                '协议': window.location.protocol,
+                '主机': window.location.host
+            };
+
+            showResult('networkResult', `网络信息：\n${Object.entries(info).map(([k,v]) => `${k}: ${v}`).join('\n')}`, 'info');
+        }
+
+        // 显示系统信息
+        function showSystemInfo() {
+            const info = {
+                '浏览器': navigator.userAgent,
+                '语言': navigator.language,
+                '平台': navigator.platform,
+                '屏幕分辨率': `${screen.width}x${screen.height}`,
+                '窗口大小': `${window.innerWidth}x${window.innerHeight}`,
+                '时区': Intl.DateTimeFormat().resolvedOptions().timeZone,
+                '当前时间': new Date().toLocaleString('zh-CN'),
+                'Cookie启用': navigator.cookieEnabled ? '是' : '否'
+            };
+
+            if (performance.memory) {
+                info['内存使用'] = `${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)} MB`;
+                info['内存限制'] = `${Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)} MB`;
+            }
+
+            showResult('systemResult', `系统信息：\n${Object.entries(info).map(([k,v]) => `${k}: ${v}`).join('\n')}`, 'info');
+        }
+
+        // 显示控制台错误
+        function showConsoleErrors() {
+            if (consoleErrors.length === 0) {
+                showResult('systemResult', '没有捕获到控制台错误', 'success');
+            } else {
+                const errorText = consoleErrors.map(err => `[${err.timestamp}] ${err.message}`).join('\n');
+                showResult('systemResult', `控制台错误 (${consoleErrors.length}条)：\n${errorText}`, 'error');
+            }
+        }
+
+        // 初始化
+        updateAuthStatus();
+    </script>
+</body>
+</html>

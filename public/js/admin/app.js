@@ -63,7 +63,9 @@ const AdminApp = {
         if (refreshBtn) {
             refreshBtn.addEventListener('click', () => {
                 this.refreshCurrentPage();
-                Auth.showNotification('数据已刷新', 'success');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification('数据已刷新', 'success');
+                }
             });
         }
 
@@ -137,7 +139,9 @@ const AdminApp = {
         if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
             e.preventDefault();
             this.refreshCurrentPage();
-            Auth.showNotification('页面已刷新', 'success');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('页面已刷新', 'success');
+            }
         }
 
         // Ctrl/Cmd + 1-4: 快速切换页面
@@ -180,7 +184,9 @@ const AdminApp = {
         if (currentModule && typeof currentModule.search === 'function') {
             currentModule.search(query);
         } else {
-            Auth.showNotification('当前页面不支持搜索', 'warning');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('当前页面不支持搜索', 'warning');
+            }
         }
     },
 
@@ -225,13 +231,19 @@ const AdminApp = {
 
             if (data) {
                 this.downloadJSON(data, filename);
-                Auth.showNotification('数据导出成功', 'success');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification('数据导出成功', 'success');
+                }
             } else {
-                Auth.showNotification('导出失败，没有数据', 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification('导出失败，没有数据', 'error');
+                }
             }
         } catch (error) {
             console.error('导出数据失败:', error);
-            Auth.showNotification('导出失败', 'error');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('导出失败', 'error');
+            }
         }
     },
 
@@ -273,13 +285,17 @@ const AdminApp = {
         };
 
         console.table(info);
-        Auth.showNotification('系统信息已输出到控制台', 'info');
+        if (Auth && Auth.showNotification) {
+            Auth.showNotification('系统信息已输出到控制台', 'info');
+        }
     },
 
     // 检查更新
     async checkForUpdates() {
         // 这里可以实现检查更新的逻辑
-        Auth.showNotification('当前已是最新版本', 'success');
+        if (Auth && Auth.showNotification) {
+            Auth.showNotification('当前已是最新版本', 'success');
+        }
     },
 
     // 清理缓存
@@ -294,7 +310,9 @@ const AdminApp = {
             }
         });
 
-        Auth.showNotification('缓存清理完成', 'success');
+        if (Auth && Auth.showNotification) {
+            Auth.showNotification('缓存清理完成', 'success');
+        }
     },
 
     // 获取应用统计信息

@@ -67,14 +67,15 @@ const Messages = {
             const result = await AdminAPI.messages.getList(params);
 
             if (result && result.success) {
-                this.renderMessages(result.data.messages);
-                this.renderPagination(result.data.pagination);
+                this.renderMessages(result.data.messages || []);
+                this.renderPagination(result.data.pagination || {});
             } else {
-                this.showError('加载消息失败');
+                console.error('加载消息失败:', result?.error);
+                this.showError(result?.error || '加载消息失败');
             }
         } catch (error) {
             console.error('加载消息失败:', error);
-            this.showError('加载消息失败');
+            this.showError('网络错误，请检查连接');
         }
     },
 
@@ -195,18 +196,34 @@ const Messages = {
 
     // 删除消息
     async deleteMessage(messageId) {
+        // 确认删除
+        const confirmed = confirm('确定要删除这条消息吗？此操作不可撤销。');
+        if (!confirmed) {
+            return;
+        }
+
         try {
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('正在删除消息...', 'info');
+            }
+            
             const result = await AdminAPI.messages.delete(messageId);
 
             if (result && result.success) {
-                Auth.showNotification('消息删除成功', 'success');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification('消息删除成功', 'success');
+                }
                 this.loadMessages();
             } else {
-                Auth.showNotification(result?.error || '删除失败', 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(result?.error || '删除失败', 'error');
+                }
             }
         } catch (error) {
             console.error('删除消息失败:', error);
-            Auth.showNotification('删除失败', 'error');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('网络错误，删除失败', 'error');
+            }
         }
     },
 

@@ -28,13 +28,19 @@ const AdminAPI = {
             // 检查响应状态
             if (!response.ok) {
                 if (response.status === 401) {
-                    Auth.showNotification('会话已过期，请重新登录', 'error');
-                    Auth.handleLogout();
+                    if (Auth && Auth.showNotification) {
+                        Auth.showNotification('会话已过期，请重新登录', 'error');
+                    }
+                    if (Auth && Auth.handleLogout) {
+                        Auth.handleLogout();
+                    }
                     return { success: false, error: '会话已过期' };
                 }
                 
                 if (response.status === 403) {
-                    Auth.showNotification('权限不足', 'error');
+                    if (Auth && Auth.showNotification) {
+                        Auth.showNotification('权限不足', 'error');
+                    }
                     return { success: false, error: '权限不足' };
                 }
                 
@@ -43,22 +49,43 @@ const AdminAPI = {
                 }
                 
                 if (response.status >= 500) {
-                    Auth.showNotification('服务器错误，请稍后重试', 'error');
+                    if (Auth && Auth.showNotification) {
+                        Auth.showNotification('服务器错误，请稍后重试', 'error');
+                    }
                     return { success: false, error: '服务器错误' };
                 }
+                
+                // 处理其他HTTP错误状态
+                return { success: false, error: `请求失败 (${response.status})` };
             }
 
-            const result = await response.json();
+            // 尝试解析JSON响应
+            let result;
+            try {
+                result = await response.json();
+            } catch (parseError) {
+                console.error('JSON解析错误:', parseError);
+                return { success: false, error: '响应格式错误' };
+            }
+            
             return result;
         } catch (error) {
             console.error('API请求错误:', error);
             
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                Auth.showNotification('网络连接失败，请检查网络', 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification('网络连接失败，请检查网络', 'error');
+                }
                 return { success: false, error: '网络连接失败' };
             }
             
-            Auth.showNotification('请求失败，请重试', 'error');
+            if (error.name === 'AbortError') {
+                return { success: false, error: '请求超时' };
+            }
+            
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('请求失败，请重试', 'error');
+            }
             return { success: false, error: '请求失败' };
         }
     },
@@ -105,7 +132,7 @@ const AdminAPI = {
         },
 
         async delete(messageId) {
-            return AdminAPI.delete(`/api/admin/messages/${messageId}`);
+            return AdminAPI.delete(`/api/admin/messages?messageId=${messageId}`);
         }
     },
 
@@ -116,7 +143,7 @@ const AdminAPI = {
         },
 
         async delete(fileId) {
-            return AdminAPI.delete(`/api/admin/files/${fileId}`);
+            return AdminAPI.delete(`/api/admin/files?fileId=${fileId}`);
         },
 
         async batchDelete(fileIds) {
@@ -131,11 +158,11 @@ const AdminAPI = {
         },
 
         async update(userId, data) {
-            return AdminAPI.put(`/api/admin/users/${userId}`, data);
+            return AdminAPI.put('/api/admin/users', { userId, ...data });
         },
 
         async delete(userId) {
-            return AdminAPI.delete(`/api/admin/users/${userId}`);
+            return AdminAPI.delete(`/api/admin/users?userId=${userId}`);
         }
     }
 };

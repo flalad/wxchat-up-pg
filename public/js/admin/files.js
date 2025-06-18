@@ -84,15 +84,16 @@ const Files = {
             const result = await AdminAPI.files.getList(params);
 
             if (result && result.success) {
-                this.renderFiles(result.data.files);
-                this.renderPagination(result.data.pagination);
-                this.updateStats(result.data.stats);
+                this.renderFiles(result.data.files || []);
+                this.renderPagination(result.data.pagination || {});
+                this.updateStats(result.data.stats || {});
             } else {
-                this.showError('加载文件失败');
+                console.error('加载文件失败:', result?.error);
+                this.showError(result?.error || '加载文件失败');
             }
         } catch (error) {
             console.error('加载文件失败:', error);
-            this.showError('加载文件失败');
+            this.showError('网络错误，请检查连接');
         }
     },
 
@@ -341,42 +342,78 @@ const Files = {
 
     // 删除文件
     async deleteFile(fileId) {
+        // 确认删除
+        const confirmed = confirm('确定要删除这个文件吗？此操作不可撤销。');
+        if (!confirmed) {
+            return;
+        }
+
         try {
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('正在删除文件...', 'info');
+            }
+            
             const result = await AdminAPI.files.delete(fileId);
 
             if (result && result.success) {
-                Auth.showNotification('文件删除成功', 'success');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification('文件删除成功', 'success');
+                }
                 this.loadFiles();
             } else {
-                Auth.showNotification(result?.error || '删除失败', 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(result?.error || '删除失败', 'error');
+                }
             }
         } catch (error) {
             console.error('删除文件失败:', error);
-            Auth.showNotification('删除失败', 'error');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('网络错误，删除失败', 'error');
+            }
         }
     },
 
     // 批量删除文件
     async batchDeleteFiles() {
         if (this.selectedFiles.size === 0) {
-            Auth.showNotification('请选择要删除的文件', 'warning');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('请选择要删除的文件', 'warning');
+            }
+            return;
+        }
+
+        // 确认批量删除
+        const confirmed = confirm(`确定要删除选中的 ${this.selectedFiles.size} 个文件吗？此操作不可撤销。`);
+        if (!confirmed) {
             return;
         }
 
         try {
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('正在批量删除文件...', 'info');
+            }
+            
             const fileIds = Array.from(this.selectedFiles);
             const result = await AdminAPI.files.batchDelete(fileIds);
 
             if (result && result.success) {
-                Auth.showNotification(result.data.message, 'success');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(result.data?.message || '批量删除成功', 'success');
+                }
                 this.selectedFiles.clear();
+                this.updateBatchDeleteButton();
+                this.updateSelectAllCheckbox();
                 this.loadFiles();
             } else {
-                Auth.showNotification(result?.error || '批量删除失败', 'error');
+                if (Auth && Auth.showNotification) {
+                    Auth.showNotification(result?.error || '批量删除失败', 'error');
+                }
             }
         } catch (error) {
             console.error('批量删除文件失败:', error);
-            Auth.showNotification('批量删除失败', 'error');
+            if (Auth && Auth.showNotification) {
+                Auth.showNotification('网络错误，批量删除失败', 'error');
+            }
         }
     },
 

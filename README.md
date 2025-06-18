@@ -598,3 +598,7 @@ Copyright (c) 2025 微信文件传输助手
 [回到顶部 ⬆️](#-微信文件传输助手-web-应用)
 
 </div>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=flalad/wxchat-up-pg&type=Date)](https://www.star-history.com/#flalad/wxchat-up-pg&Date)

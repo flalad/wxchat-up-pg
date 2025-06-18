@@ -24,20 +24,42 @@ const AdminAPI = {
 
         try {
             const response = await fetch(url, finalOptions);
-            const result = await response.json();
-
-            // 处理认证失败
-            if (response.status === 401) {
-                Auth.showNotification('会话已过期，请重新登录', 'error');
-                Auth.handleLogout();
-                return null;
+            
+            // 检查响应状态
+            if (!response.ok) {
+                if (response.status === 401) {
+                    Auth.showNotification('会话已过期，请重新登录', 'error');
+                    Auth.handleLogout();
+                    return { success: false, error: '会话已过期' };
+                }
+                
+                if (response.status === 403) {
+                    Auth.showNotification('权限不足', 'error');
+                    return { success: false, error: '权限不足' };
+                }
+                
+                if (response.status === 404) {
+                    return { success: false, error: '请求的资源不存在' };
+                }
+                
+                if (response.status >= 500) {
+                    Auth.showNotification('服务器错误，请稍后重试', 'error');
+                    return { success: false, error: '服务器错误' };
+                }
             }
 
+            const result = await response.json();
             return result;
         } catch (error) {
             console.error('API请求错误:', error);
-            Auth.showNotification('网络错误，请重试', 'error');
-            return null;
+            
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                Auth.showNotification('网络连接失败，请检查网络', 'error');
+                return { success: false, error: '网络连接失败' };
+            }
+            
+            Auth.showNotification('请求失败，请重试', 'error');
+            return { success: false, error: '请求失败' };
         }
     },
 

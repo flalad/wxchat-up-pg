@@ -104,9 +104,9 @@ export async function onRequestGet(context) {
           messages: todayStats.today_messages,
           files: todayStats.today_files
         },
-        weeklyActivity: weeklyActivity.results,
-        recentUsers: recentUsers.results,
-        fileTypes: fileTypes.results,
+        weeklyActivity: weeklyActivity.results || [],
+        recentUsers: recentUsers.results || [],
+        fileTypes: fileTypes.results || [],
         storage: {
           fileCount: storageInfo.file_count,
           usedSpace: storageInfo.used_space,

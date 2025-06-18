@@ -41,6 +41,9 @@ const AdminApp = {
             });
         });
 
+        // 头部按钮事件
+        this.bindHeaderEvents();
+
         // 处理浏览器前进后退
         window.addEventListener('popstate', (e) => {
             const page = e.state?.page || 'dashboard';
@@ -51,6 +54,26 @@ const AdminApp = {
         document.addEventListener('keydown', (e) => {
             this.handleKeyboardShortcuts(e);
         });
+    },
+
+    // 绑定头部事件
+    bindHeaderEvents() {
+        // 刷新按钮
+        const refreshBtn = document.getElementById('refreshAllBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                this.refreshCurrentPage();
+                Auth.showNotification('数据已刷新', 'success');
+            });
+        }
+
+        // 设置按钮
+        const settingsBtn = document.getElementById('settingsBtn');
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => {
+                this.showSettings();
+            });
+        }
     },
 
     // 显示页面
@@ -304,6 +327,199 @@ const AdminApp = {
             };
         }
         return null;
+    },
+
+    // 显示设置面板
+    showSettings() {
+        const settingsInfo = {
+            currentPage: this.currentPage,
+            sessionDuration: this.getSessionDuration(),
+            memoryUsage: this.getMemoryUsage(),
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            platform: navigator.platform,
+            onLine: navigator.onLine,
+            screenResolution: `${screen.width}x${screen.height}`,
+            windowSize: `${window.innerWidth}x${window.innerHeight}`,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        };
+
+        let settingsHtml = `
+            <div style="max-width: 600px; background: rgba(255,255,255,0.95); padding: 2rem; border-radius: 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 1.5rem 0; color: #2d3748; font-size: 1.5rem;">系统设置</h3>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: #4a5568;">会话信息</h4>
+                    <p style="margin: 0.25rem 0; color: #718096;">当前页面: ${settingsInfo.currentPage}</p>
+                    <p style="margin: 0.25rem 0; color: #718096;">会话时长: ${settingsInfo.sessionDuration} 分钟</p>
+                </div>
+
+                ${settingsInfo.memoryUsage ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: #4a5568;">内存使用</h4>
+                    <p style="margin: 0.25rem 0; color: #718096;">已使用: ${settingsInfo.memoryUsage.used} MB</p>
+                    <p style="margin: 0.25rem 0; color: #718096;">总计: ${settingsInfo.memoryUsage.total} MB</p>
+                    <p style="margin: 0.25rem 0; color: #718096;">限制: ${settingsInfo.memoryUsage.limit} MB</p>
+                </div>
+                ` : ''}
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: #4a5568;">系统信息</h4>
+                    <p style="margin: 0.25rem 0; color: #718096;">语言: ${settingsInfo.language}</p>
+                    <p style="margin: 0.25rem 0; color: #718096;">平台: ${settingsInfo.platform}</p>
+                    <p style="margin: 0.25rem 0; color: #718096;">在线状态: ${settingsInfo.onLine ? '在线' : '离线'}</p>
+                    <p style="margin: 0.25rem 0; color: #718096;">屏幕分辨率: ${settingsInfo.screenResolution}</p>
+                    <p style="margin: 0.25rem 0; color: #718096;">窗口大小: ${settingsInfo.windowSize}</p>
+                    <p style="margin: 0.25rem 0; color: #718096;">时区: ${settingsInfo.timezone}</p>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button onclick="AdminApp.clearCache()" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #A8E6CF, #88D8C0); color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">清理缓存</button>
+                    <button onclick="AdminApp.checkForUpdates()" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #ADD8E6, #87CEEB); color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">检查更新</button>
+                    <button onclick="AdminApp.showSystemInfo()" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #FFCDD2, #F8BBD9); color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">系统详情</button>
+                    <button onclick="AdminApp.closeSettings()" style="padding: 0.5rem 1rem; background: #718096; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">关闭</button>
+                </div>
+            </div>
+        `;
+
+        // 创建设置模态框
+        const settingsModal = document.createElement('div');
+        settingsModal.id = 'settingsModal';
+        settingsModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        `;
+        settingsModal.innerHTML = settingsHtml;
+
+        // 点击背景关闭
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                this.closeSettings();
+            }
+        });
+
+        document.body.appendChild(settingsModal);
+    },
+
+    // 关闭设置面板
+    closeSettings() {
+        const settingsModal = document.getElementById('settingsModal');
+        if (settingsModal) {
+            settingsModal.remove();
+        }
+    },
+    // 苹果风格窗口控制按钮交互
+    bindAppleWindowControls: function() {
+        const closeBtn = document.querySelector('.control-btn.close');
+        const minimizeBtn = document.querySelector('.control-btn.minimize');
+        const maximizeBtn = document.querySelector('.control-btn.maximize');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                if (confirm('确定要关闭管理后台吗？')) {
+                    window.close();
+                }
+            });
+        }
+        
+        if (minimizeBtn) {
+            minimizeBtn.addEventListener('click', () => {
+                // 模拟最小化效果
+                const appleWindow = document.querySelector('.apple-window');
+                if (appleWindow) {
+                    appleWindow.style.transform = 'scale(0.1)';
+                    appleWindow.style.opacity = '0';
+                    setTimeout(() => {
+                        appleWindow.style.transform = 'scale(1)';
+                        appleWindow.style.opacity = '1';
+                    }, 300);
+                }
+            });
+        }
+        
+        if (maximizeBtn) {
+            maximizeBtn.addEventListener('click', () => {
+                const appleWindow = document.querySelector('.apple-window');
+                if (appleWindow) {
+                    if (appleWindow.style.maxWidth === 'none') {
+                        appleWindow.style.maxWidth = '1400px';
+                        appleWindow.style.margin = '0 auto';
+                    } else {
+                        appleWindow.style.maxWidth = 'none';
+                        appleWindow.style.margin = '0';
+                        appleWindow.style.width = '100%';
+                    }
+                }
+            });
+        }
+    },
+
+    // 初始化苹果风格增强
+    initAppleEnhancements: function() {
+        this.bindAppleWindowControls();
+        
+        // 添加窗口拖拽效果（仅视觉效果）
+        const titlebar = document.querySelector('.apple-titlebar');
+        if (titlebar) {
+            let isDragging = false;
+            let startX, startY;
+            
+            titlebar.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.window-controls') || e.target.closest('.window-actions')) {
+                    return;
+                }
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                titlebar.style.cursor = 'grabbing';
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                
+                // 仅视觉反馈，不实际移动窗口
+                const appleWindow = document.querySelector('.apple-window');
+                if (appleWindow && (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5)) {
+                    appleWindow.style.transform = `translate(${deltaX * 0.1}px, ${deltaY * 0.1}px)`;
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    titlebar.style.cursor = '';
+                    const appleWindow = document.querySelector('.apple-window');
+                    if (appleWindow) {
+                        appleWindow.style.transform = '';
+                    }
+                }
+            });
+        }
+        
+        // 添加窗口焦点效果
+        const appleWindow = document.querySelector('.apple-window');
+        if (appleWindow) {
+            window.addEventListener('focus', () => {
+                appleWindow.style.boxShadow = '0 16px 48px rgba(0,0,0,0.20)';
+            });
+            
+            window.addEventListener('blur', () => {
+                appleWindow.style.boxShadow = '0 8px 32px rgba(0,0,0,0.12)';
+            });
+        }
     }
 };
 
@@ -319,6 +535,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hash && ['dashboard', 'messages', 'files', 'users'].includes(hash)) {
         AdminApp.currentPage = hash;
     }
+    
+    // 初始化苹果风格增强
+    AdminApp.initAppleEnhancements();
 });
 
 // 导出到全局

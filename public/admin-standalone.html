@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信文件传输助手 - 管理后台</title>
+    
+    <!-- 内联样式 -->
+    <style>
+        /* 苹果风格管理后台样式 */
+        :root {
+            --primary-color: #007aff;
+            --primary-dark: #0056cc;
+            --primary-light: #e8f4fd;
+            --secondary-color: #f2f2f7;
+            --danger-color: #ff3b30;
+            --warning-color: #ff9500;
+            --info-color: #5ac8fa;
+            --success-color: #34c759;
+            --dark-color: #1c1c1e;
+            --light-color: #f2f2f7;
+            --border-color: #d1d1d6;
+            --text-color: #1c1c1e;
+            --text-muted: #8e8e93;
+            --text-light: #c7c7cc;
+            --bg-primary: rgba(255, 255, 255, 0.95);
+            --bg-secondary: rgba(242, 242, 247, 0.95);
+            --bg-tertiary: rgba(233, 236, 239, 0.95);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+            --shadow-xl: 0 16px 48px rgba(0,0,0,0.20);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --gradient-primary: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
+            --backdrop-blur: blur(20px);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 动态渐变背景容器 */
+        .dynamic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .dynamic-background canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        /* 苹果风格窗口容器 */
+        .apple-window {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            backdrop-filter: var(--backdrop-blur);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            position: relative;
+            min-height: calc(100vh - 40px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* 窗口标题栏 */
+        .apple-titlebar {
+            background: rgba(246, 246, 246, 0.95);
+            backdrop-filter: var(--backdrop-blur);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* 窗口控制按钮 */
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .control-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn.close { background: #ff5f57; }
+        .control-btn.minimize { background: #ffbd2e; }
+        .control-btn.maximize { background: #28ca42; }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
+
+        /* 窗口标题 */
+        .window-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-color);
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-icon {
+            width: 16px;
+            height: 16px;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        /* 主内容区 */
+        .admin-app {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 92px);
+            background: transparent;
+        }
+
+        .admin-header {
+            background: var(--bg-primary);
+            backdrop-filter: var(--backdrop-blur);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            flex-shrink: 0;
+        }
+
+        .logo-text h1 {
+            margin: 0;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .logo-subtitle {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .admin-container {
+            display: flex;
+            height: calc(100vh - 160px);
+            background: transparent;
+        }
+
+        .admin-sidebar {
+            width: 280px;
+            background: var(--bg-primary);
+            backdrop-filter: var(--backdrop-blur);
+            border-right: 1px solid rgba(0, 0, 0, 0.08);
+            margin: 12px 0 12px 12px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 20px 12px 20px;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            margin-bottom: 12px;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin: 4px 12px;
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: var(--radius);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-item.active a {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-item .icon {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            color: currentColor;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item span {
+            font-size: 13px;
+            letter-spacing: 0.2px;
+            flex: 1;
+        }
+
+        .nav-item a:hover .icon,
+        .nav-item.active a .icon {
+            transform: scale(1.1);
+        }
+
+        .section-icon {
+            width: 14px;
+            height: 14px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: transparent;
+            margin: 12px 12px 12px 0;
+        }
+
+        .page {
+            background: var(--bg-primary);
+            backdrop-filter: var(--backdrop-blur);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .page-header h2 {
+            margin: 0;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .page-header p {
+            margin: 8px 0 0 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            backdrop-filter: var(--backdrop-blur);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card .stat-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            color: white;
+            box-shadow: var(--shadow-sm);
+            flex-shrink: 0;
+            padding: 10px;
+        }
+
+        .stat-card .stat-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .stat-card .stat-content h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-content p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: var(--radius-sm);
+            transition: background 0.2s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- 主界面 -->
+    <div id="adminApp">
+        <!-- 苹果风格窗口容器 -->
+        <div class="apple-window">
+            <!-- 窗口标题栏 -->
+            <div class="apple-titlebar">
+                <div class="window-controls">
+                    <div class="control-btn close"></div>
+                    <div class="control-btn minimize"></div>
+                    <div class="control-btn maximize"></div>
+                </div>
+                <div class="window-title">
+                    <svg class="title-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path fill="currentColor" d="M3,3H21A2,2 0 0,1 23,5V19A2,2 0 0,1 21,21H3A2,2 0 0,1 1,19V5A2,2 0 0,1 3,3M3,5V19H21V5H3M5,7H19V9H5V7M5,11H19V13H5V11M5,15H19V17H5V15Z"/>
+                    </svg>
+                    <span>微信文件传输助手 - 管理后台</span>
+                </div>
+            </div>
+            
+            <!-- 管理后台应用主体 -->
+            <div class="admin-app">
+                <!-- 顶部导航栏 -->
+                <header class="admin-header">
+                    <div class="header-left">
+                        <div class="logo-container">
+                            <svg class="logo-icon" viewBox="0 0 24 24" width="32" height="32">
+                                <path fill="url(#logoGradient)" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,6V8H13V6H11M11,10V18H13V10H11Z"/>
+                                <defs>
+                                    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#007aff"/>
+                                        <stop offset="100%" style="stop-color:#5ac8fa"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="logo-text">
+                                <h1>微信文件传输助手</h1>
+                                <span class="logo-subtitle">管理后台</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="admin-container">
+                    <!-- 侧边栏 -->
+                    <aside class="admin-sidebar">
+                        <nav class="sidebar-nav">
+                            <div class="nav-section">
+                                <div class="nav-section-title">
+                                    <svg class="section-icon" viewBox="0 0 24 24" width="14" height="14">
+                                        <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/>
+                                    </svg>
+                                    <span>主要功能</span>
+                                </div>
+                                <ul>
+                                    <li class="nav-item active">
+                                        <a href="#dashboard">
+                                            <svg class="icon" viewBox="0 0 24 24" width="18" height="18">
+                                                <path fill="currentColor" d="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z"/>
+                                            </svg>
+                                            <span>仪表板</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#messages">
+                                            <svg class="icon" viewBox="0 0 24 24" width="18" height="18">
+                                                <path fill="currentColor" d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6V9M14,14H6V12H14V14M18,8H6V6H18V8Z"/>
+                                            </svg>
+                                            <span>信息管理</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#files">
+                                            <svg class="icon" viewBox="0 0 24 24" width="18" height="18">
+                                                <path fill="currentColor" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z"/>
+                                            </svg>
+                                            <span>文件管理</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="nav-section">
+                                <div class="nav-section-title">
+                                    <svg class="section-icon" viewBox="0 0 24 24" width="14" height="14">
+                                        <path fill="currentColor" d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                                    </svg>
+                                    <span>系统管理</span>
+                                </div>
+                                <ul>
+                                    <li class="nav-item">
+                                        <a href="#users">
+                                            <svg class="icon" viewBox="0 0 24 24" width="18" height="18">
+                                                <path fill="currentColor" d="M16,4C18.21,4 20,5.79 20,8C20,10.21 18.21,12 16,12C13.79,12 12,10.21 12,8C12,5.79 13.79,4 16,4M16,14C20.42,14 24,15.79 24,18V20H8V18C8,15.79 11.58,14 16,14M6,6H4V4H6V6M6,8H4V10H6V8M6,12H4V14H6V12M6,16H4V18H6V16M8,18H6V20H8V18M8,16H10V18H8V16M8,14H10V16H8V14M8,12H10V14H8V12M8,10H10V12H8V10M8,8H10V10H8V8M8,6H10V8H8V6M8,4H10V6H8V4M10,2H8V4H10V2M4,2H6V4H4V2Z"/>
+                                            </svg>
+                                            <span>用户管理</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </aside>
+
+                    <!-- 主内容区 -->
+                    <main class="admin-main">
+                        <div class="page">
+                            <div class="page-header">
+                                <h2>仪表板</h2>
+                                <p>系统概览和统计信息</p>
+                            </div>
+
+                            <!-- 统计卡片 -->
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <svg class="stat-icon" viewBox="0 0 24 24" width="28" height="28">
+                                        <path fill="currentColor" d="M16,4C18.21,4 20,5.79 20,8C20,10.21 18.21,12 16,12C13.79,12 12,10.21 12,8C12,5.79 13.79,4 16,4M16,14C20.42,14 24,15.79 24,18V20H8V18C8,15.79 11.58,14 16,14M6,6H4V4H6V6M6,8H4V10H6V8M6,12H4V14H6V12M6,16H4V18H6V16M8,18H6V20H8V18M8,16H10V18H8V16M8,14H10V16H8V14M8,12H10V14H8V12M8,10H10V12H8V10M8,8H10V10H8V8M8,6H10V8H8V6M8,4H10V6H8V4M10,2H8V4H10V2M4,2H6V4H4V2Z"/>
+                                    </svg>
+                                    <div class="stat-content">
+                                        <h3>123</h3>
+                                        <p>总用户数</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <svg class="stat-icon" viewBox="0 0 24 24" width="28" height="28">
+                                        <path fill="currentColor" d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6V9M14,14H6V12H14V14M18,8H6V6H18V8Z"/>
+                                    </svg>
+                                    <div class="stat-content">
+                                        <h3>456</h3>
+                                        <p>总消息数</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <svg class="stat-icon" viewBox="0 0 24 24" width="28" height="28">
+                                        <path fill="currentColor" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z"/>
+                                    </svg>
+                                    <div class="stat-content">
+                                        <h3>789</h3>
+                                        <p>总文件数</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <svg class="stat-icon" viewBox="0 0 24 24" width="28" height="28">
+                                        <path fill="currentColor" d="M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4Z"/>
+                                    </svg>
+                                    <div class="stat-content">
+                                        <h3>2.5 GB</h3>
+                                        <p>存储使用</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 内联JavaScript -->
+    <script>
+        // 动态渐变背景类 - 完全基于原始渐变动态背景文件
+        class AdminDynamicBackground {
+            constructor() {
+                this.colors = [
+                    "#ff3cac", "#784ba0", "#2b86c5", "#42e695", "#ffb300", "#ff6e7f",
+                    "#bfe9ff", "#f9d423", "#e65c00", "#00eaff", "#ff00cc", "#3333ff",
+                    "#00ffcc", "#ffcc00", "#ff0066", "#00ff99", "#6600ff", "#ff3300"
+                ];
+
+                // 优化为更清晰的浅绿色到浅蓝色到浅粉色渐变色组
+                this.gradients = [
+                    // 浅绿色渐变
+                    [
+                        {x: 0.3, y: 0.2, color: "#A8E6CF"},
+                        {x: 0.7, y: 0.8, color: "#88D8C0"},
+                        {x: 0.1, y: 0.9, color: "#B8F2E6"}
+                    ],
+                    // 浅蓝色渐变
+                    [
+                        {x: 0.4, y: 0.3, color: "#ADD8E6"},
+                        {x: 0.8, y: 0.7, color: "#87CEEB"},
+                        {x: 0.2, y: 0.1, color: "#C7E0F0"}
+                    ],
+                    // 浅粉色渐变
+                    [
+                        {x: 0.6, y: 0.4, color: "#FFCDD2"},
+                        {x: 0.1, y: 0.6, color: "#F8BBD9"},
+                        {x: 0.9, y: 0.2, color: "#FFE0E6"}
+                    ]
+                ];
+
+                this.bgCanvas = null;
+                this.effectCanvas = null;
+                this.bgCtx = null;
+                this.effectCtx = null;
+                this.w = 0;
+                this.h = 0;
+                
+                this.floatShapes = [];
+                this.points = [];
+                this.POINTS = 50; // 使用原始文件的粒子数量
+                
+                this.gradIndex = 0;
+                this.gradNext = 1;
+                this.gradTime = 0;
+                this.gradDuration = 5.0; // 使用原始文件的渐变切换时间
+                
+                this.frameCount = 0;
+                this.SKIP_CONNECTION_FRAMES = 2; // 使用原始文件的跳帧设置
+                
+                this.lastTime = performance.now();
+                this.animationId = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.createCanvases();
+                this.setupDimensions();
+                this.createFloatShapes();
+                this.createPoints();
+                this.bindEvents();
+                this.startAnimation();
+            }
+
+            createCanvases() {
+                const backgroundContainer = document.createElement('div');
+                backgroundContainer.className = 'dynamic-background';
+                
+                this.bgCanvas = document.createElement('canvas');
+                this.bgCanvas.id = 'admin-bg-canvas';
+                this.bgCtx = this.bgCanvas.getContext('2d');
+                
+                this.effectCanvas = document.createElement('canvas');
+                this.effectCanvas.id = 'admin-effect-canvas';
+                this.effectCtx = this.effectCanvas.getContext('2d');
+                
+                backgroundContainer.appendChild(this.bgCanvas);
+                backgroundContainer.appendChild(this.effectCanvas);
+                
+                document.body.insertBefore(backgroundContainer, document.body.firstChild);
+            }
+
+            setupDimensions() {
+                this.w = window.innerWidth;
+                this.h = window.innerHeight;
+                
+                this.bgCanvas.width = this.effectCanvas.width = this.w;
+                this.bgCanvas.height = this.effectCanvas.height = this.h;
+            }
+
+            createFloatShapes() {
+                this.floatShapes = [];
+                // 半透明漂浮几何体 - 使用原始文件的参数
+                for (let i = 0; i < 15; i++) {
+                    this.floatShapes.push({
+                        x: Math.random() * this.w,
+                        y: Math.random() * this.h,
+                        size: 60 + Math.random() * 100,
+                        color: this.colors[Math.floor(Math.random() * this.colors.length)],
+                        alpha: 0.06 + Math.random() * 0.08,
+                        type: Math.random() > 0.5 ? 'ellipse' : 'rect',
+                        dx: (Math.random() - 0.5) * 0.25, // 增加移动速度
+                        dy: (Math.random() - 0.5) * 0.25,
+                        rot: Math.random() * Math.PI * 2,
+                        drot: (Math.random() - 0.5) * 0.002 // 增加旋转速度
+                    });
+                }
+            }
+
+            createPoints() {
+                this.points = [];
+                // 粒子点 - 使用原始文件的参数
+                for (let i = 0; i < this.POINTS; i++) {
+                    this.points.push({
+                        x: Math.random() * this.w,
+                        y: Math.random() * this.h,
+                        vx: (Math.random() - 0.5) * 0.6, // 增加移动速度
+                        vy: (Math.random() - 0.5) * 0.6,
+                        color: this.colors[Math.floor(Math.random() * this.colors.length)],
+                        size: 2.5 + Math.random() * 2.5,
+                        shape: Math.random() < 0.7 ? 'circle' : (Math.random() < 0.5 ? 'triangle' : 'star')
+                    });
+                }
+            }
+
+            // 动态渐变背景 - 完全按照原始文件实现
+            drawBgGradient(dt) {
+                this.gradTime += dt;
+                let t = Math.min(this.gradTime / this.gradDuration, 1);
+                // 使用更平滑的缓动函数
+                t = t * t * t * (t * (t * 6 - 15) + 10); // smootherstep函数
+                
+                // 插值渐变
+                let g1 = this.gradients[this.gradIndex];
+                let g2 = this.gradients[this.gradNext];
+                let stops = [];
+                
+                for (let i = 0; i < g1.length; i++) {
+                    // 颜色插值
+                    let c1 = g1[i].color;
+                    let c2 = g2[i].color;
+                    let rgb1 = c1.match(/\w\w/g).map(x => parseInt(x, 16));
+                    let rgb2 = c2.match(/\w\w/g).map(x => parseInt(x, 16));
+                    let rgb = rgb1.map((v, i) => Math.round(v * (1 - t) + rgb2[i] * t));
+                    
+                    stops.push({
+                        x: g1[i].x * (1 - t) + g2[i].x * t,
+                        y: g1[i].y * (1 - t) + g2[i].y * t,
+                        color: `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
+                    });
+                }
+                
+                // 绘制更大范围的径向渐变，增强过渡效果
+                let centerX = this.w / 2 + Math.sin(this.gradTime * 0.3) * this.w * 0.1;
+                let centerY = this.h / 2 + Math.cos(this.gradTime * 0.2) * this.h * 0.1;
+                
+                let grad = this.bgCtx.createRadialGradient(
+                    stops[0].x * this.w, stops[0].y * this.h, this.w * 0.02,
+                    centerX, centerY, Math.max(this.w, this.h) * 1.2
+                );
+                
+                grad.addColorStop(0, stops[0].color);
+                grad.addColorStop(0.4, stops[1].color);
+                grad.addColorStop(1, stops[2].color);
+                
+                this.bgCtx.fillStyle = grad;
+                this.bgCtx.fillRect(0, 0, this.w, this.h);
+
+                if (this.gradTime >= this.gradDuration) {
+                    this.gradTime = 0;
+                    this.gradIndex = this.gradNext;
+                    this.gradNext = (this.gradNext + 1) % this.gradients.length;
+                }
+            }
+
+            // 画点 - 完全按照原始文件实现
+            drawPoint(p) {
+                this.effectCtx.save();
+                this.effectCtx.beginPath();
+                this.effectCtx.fillStyle = p.color;
+                this.effectCtx.globalAlpha = 0.9;
+                
+                if (p.shape === 'circle') {
+                    this.effectCtx.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
+                    this.effectCtx.fill();
+                } else if (p.shape === 'triangle') {
+                    this.effectCtx.translate(p.x, p.y);
+                    this.effectCtx.rotate(p.x / 80 + p.y / 80); // 稍微增加旋转速度
+                    this.effectCtx.moveTo(0, -p.size);
+                    this.effectCtx.lineTo(p.size, p.size);
+                    this.effectCtx.lineTo(-p.size, p.size);
+                    this.effectCtx.closePath();
+                    this.effectCtx.fill();
+                } else if (p.shape === 'star') {
+                    this.effectCtx.translate(p.x, p.y);
+                    this.effectCtx.rotate(p.x / 80 - p.y / 80); // 稍微增加旋转速度
+                    for (let i = 0; i < 5; i++) {
+                        this.effectCtx.lineTo(
+                            Math.cos((18 + i * 72) / 180 * Math.PI) * p.size,
+                            -Math.sin((18 + i * 72) / 180 * Math.PI) * p.size
+                        );
+                        this.effectCtx.lineTo(
+                            Math.cos((54 + i * 72) / 180 * Math.PI) * p.size * 0.5,
+                            -Math.sin((54 + i * 72) / 180 * Math.PI) * p.size * 0.5
+                        );
+                    }
+                    this.effectCtx.closePath();
+                    this.effectCtx.fill();
+                }
+                
+                this.effectCtx.restore();
+            }
+
+            // 画线 - 完全按照原始文件实现
+            drawLine(p1, p2) {
+                this.effectCtx.save();
+                this.effectCtx.globalAlpha = 0.15;
+                this.effectCtx.strokeStyle = "#fff";
+                this.effectCtx.lineWidth = 0.8;
+                this.effectCtx.beginPath();
+                this.effectCtx.moveTo(p1.x, p1.y);
+                this.effectCtx.lineTo(p2.x, p2.y);
+                this.effectCtx.stroke();
+                this.effectCtx.restore();
+            }
+
+            // 动画 - 完全按照原始文件实现
+            animate(now) {
+                let dt = (now - this.lastTime) / 1000;
+                this.lastTime = now;
+                this.frameCount++;
+                
+                this.drawBgGradient(dt);
+                this.effectCtx.clearRect(0, 0, this.w, this.h);
+
+                // 漂浮几何体 - 更快的移动
+                for (let s of this.floatShapes) {
+                    this.effectCtx.save();
+                    this.effectCtx.globalAlpha = s.alpha;
+                    this.effectCtx.fillStyle = s.color;
+                    this.effectCtx.translate(s.x, s.y);
+                    this.effectCtx.rotate(s.rot);
+                    
+                    if (s.type === 'ellipse') {
+                        this.effectCtx.beginPath();
+                        this.effectCtx.ellipse(0, 0, s.size * 0.7, s.size, 0, 0, 2 * Math.PI);
+                        this.effectCtx.fill();
+                    } else {
+                        this.effectCtx.fillRect(-s.size / 2, -s.size / 2, s.size, s.size);
+                    }
+                    
+                    this.effectCtx.restore();
+                    
+                    s.x += s.dx;
+                    s.y += s.dy;
+                    s.rot += s.drot;
+                    
+                    if (s.x < -200) s.x = this.w + 100;
+                    if (s.x > this.w + 200) s.x = -100;
+                    if (s.y < -200) s.y = this.h + 100;
+                    if (s.y > this.h + 200) s.y = -100;
+                }
+
+                // 点和线 - 更快的移动
+                for (let i = 0; i < this.POINTS; i++) {
+                    let p = this.points[i];
+                    
+                    // 画点
+                    this.drawPoint(p);
+                    
+                    // 性能优化：跳帧绘制连接线
+                    if (this.frameCount % this.SKIP_CONNECTION_FRAMES === 0) {
+                        // 画线，限制连接数量
+                        let connectionCount = 0;
+                        const maxConnections = 3;
+                        
+                        for (let j = i + 1; j < this.POINTS && connectionCount < maxConnections; j++) {
+                            let q = this.points[j];
+                            let dx = p.x - q.x;
+                            let dy = p.y - q.y;
+                            let dist = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (dist < 150) {
+                                this.drawLine(p, q);
+                                connectionCount++;
+                            }
+                        }
+                    }
+                    
+                    // 移动 - 更快的速度
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    if (p.x < 0 || p.x > this.w) p.vx *= -1;
+                    if (p.y < 0 || p.y > this.h) p.vy *= -1;
+                }
+                
+                this.animationId = requestAnimationFrame((time) => this.animate(time));
+            }
+
+            startAnimation() {
+                this.animationId = requestAnimationFrame((time) => this.animate(time));
+            }
+
+            bindEvents() {
+                window.addEventListener('resize', () => {
+                    this.setupDimensions();
+                    this.createFloatShapes();
+                    this.createPoints();
+                });
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 启动动态背景
+            new AdminDynamicBackground();
+            
+            // 简单的交互效果
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 统计卡片悬停效果
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // 窗口控制按钮交互
+            const closeBtn = document.querySelector('.control-btn.close');
+            const minimizeBtn = document.querySelector('.control-btn.minimize');
+            const maximizeBtn = document.querySelector('.control-btn.maximize');
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    if (confirm('确定要关闭管理后台吗？')) {
+                        window.close();
+                    }
+                });
+            }
+            
+            if (minimizeBtn) {
+                minimizeBtn.addEventListener('click', () => {
+                    const appleWindow = document.querySelector('.apple-window');
+                    if (appleWindow) {
+                        appleWindow.style.transform = 'scale(0.1)';
+                        appleWindow.style.opacity = '0';
+                        setTimeout(() => {
+                            appleWindow.style.transform = 'scale(1)';
+                            appleWindow.style.opacity = '1';
+                        }, 300);
+                    }
+                });
+            }
+            
+            if (maximizeBtn) {
+                maximizeBtn.addEventListener('click', () => {
+                    const appleWindow = document.querySelector('.apple-window');
+                    if (appleWindow) {
+                        if (appleWindow.style.maxWidth === 'none') {
+                            appleWindow.style.maxWidth = '1400px';
+                            appleWindow.style.margin = '0 auto';
+                        } else {
+                            appleWindow.style.maxWidth = 'none';
+                            appleWindow.style.margin = '0';
+                            appleWindow.style.width = '100%';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

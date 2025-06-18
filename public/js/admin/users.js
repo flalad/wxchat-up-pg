@@ -267,52 +267,87 @@ const Users = {
     async toggleUserStatus(userId, isActive) {
         const action = isActive ? '启用' : '禁用';
 
+        // 确认操作
+        const confirmed = await this.showConfirmDialog(
+            `确认${action}用户`,
+            `确定要${action}这个用户吗？${!isActive ? '禁用后用户将无法登录系统。' : ''}`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
         try {
+            Auth.showNotification(`正在${action}用户...`, 'info');
             const result = await AdminAPI.users.update(userId, { isActive });
 
             if (result && result.success) {
                 Auth.showNotification(`用户${action}成功`, 'success');
                 this.loadUsers();
             } else {
-                Auth.showNotification(result?.error || `${action}失败`, 'error');
+                Auth.showNotification(result?.error || `${action}失败，请重试`, 'error');
             }
         } catch (error) {
             console.error(`${action}用户失败:`, error);
-            Auth.showNotification(`${action}失败`, 'error');
+            Auth.showNotification(`网络错误，${action}失败`, 'error');
         }
     },
 
     // 切换用户角色
     async toggleUserRole(userId, role) {
+        const roleText = role === 'admin' ? '管理员' : '普通用户';
+        
+        // 确认操作
+        const confirmed = await this.showConfirmDialog(
+            '确认修改角色',
+            `确定要将用户角色设置为${roleText}吗？`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
         try {
+            Auth.showNotification('正在修改用户角色...', 'info');
             const result = await AdminAPI.users.update(userId, { role });
 
             if (result && result.success) {
                 Auth.showNotification('用户角色修改成功', 'success');
                 this.loadUsers();
             } else {
-                Auth.showNotification(result?.error || '角色修改失败', 'error');
+                Auth.showNotification(result?.error || '角色修改失败，请重试', 'error');
             }
         } catch (error) {
             console.error('修改用户角色失败:', error);
-            Auth.showNotification('角色修改失败', 'error');
+            Auth.showNotification('网络错误，角色修改失败', 'error');
         }
     },
 
     // 删除用户
     async deleteUser(userId) {
+        // 显示确认对话框
+        const confirmed = await this.showConfirmDialog(
+            '确认删除用户',
+            '此操作将永久删除用户及其所有数据，包括消息和文件。此操作不可撤销，确定要继续吗？'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
         try {
+            Auth.showNotification('正在删除用户...', 'info');
             const result = await AdminAPI.users.delete(userId);
 
             if (result && result.success) {
                 Auth.showNotification('用户删除成功', 'success');
                 this.loadUsers();
             } else {
-                Auth.showNotification(result?.error || '删除失败', 'error');
+                Auth.showNotification(result?.error || '删除失败，请重试', 'error');
             }
         } catch (error) {
             console.error('删除用户失败:', error);
-            Auth.showNotification('删除失败', 'error');
+            Auth.showNotification('网络错误，请检查连接后重试', 'error');
         }
     },
 
@@ -339,44 +374,11 @@ const Users = {
         }
     },
 
-    // 确认对话框
-    showConfirm(title, message) {
+    // 简化的确认对话框
+    showConfirmDialog(title, message) {
         return new Promise((resolve) => {
-            const modal = document.getElementById('confirmModal');
-            const titleEl = document.getElementById('confirmTitle');
-            const messageEl = document.getElementById('confirmMessage');
-            const cancelBtn = document.getElementById('confirmCancel');
-            const okBtn = document.getElementById('confirmOk');
-
-            // 检查元素是否存在
-            if (!modal || !titleEl || !messageEl || !cancelBtn || !okBtn) {
-                console.error('确认对话框元素未找到');
-                resolve(false);
-                return;
-            }
-
-            titleEl.textContent = title;
-            messageEl.textContent = message;
-            modal.style.display = 'flex';
-
-            const cleanup = () => {
-                modal.style.display = 'none';
-                cancelBtn.removeEventListener('click', handleCancel);
-                okBtn.removeEventListener('click', handleOk);
-            };
-
-            const handleCancel = () => {
-                cleanup();
-                resolve(false);
-            };
-
-            const handleOk = () => {
-                cleanup();
-                resolve(true);
-            };
-
-            cancelBtn.addEventListener('click', handleCancel);
-            okBtn.addEventListener('click', handleOk);
+            const confirmed = confirm(`${title}\n\n${message}`);
+            resolve(confirmed);
         });
     },
 

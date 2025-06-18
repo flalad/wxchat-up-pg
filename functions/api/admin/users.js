@@ -95,19 +95,19 @@ export async function onRequestGet(context) {
     return new Response(JSON.stringify({
       success: true,
       data: {
-        users: users.results,
+        users: users.results || [],
         pagination: {
           page,
           limit,
-          total: countResult.total,
-          totalPages: Math.ceil(countResult.total / limit)
+          total: countResult.total || 0,
+          totalPages: Math.ceil((countResult.total || 0) / limit)
         },
         stats: {
-          totalUsers: stats.total_users,
-          adminCount: stats.admin_count,
-          userCount: stats.user_count,
-          activeCount: stats.active_count,
-          recentActiveCount: stats.recent_active
+          totalUsers: stats.total_users || 0,
+          adminCount: stats.admin_count || 0,
+          userCount: stats.user_count || 0,
+          activeCount: stats.active_count || 0,
+          recentActiveCount: stats.recent_active || 0
         }
       }
     }), {

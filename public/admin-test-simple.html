@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台测试 - 苹果风格</title>
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="css/reset.css?v=5">
+    <link rel="stylesheet" href="css/admin-apple-style.css?v=1">
+</head>
+<body>
+    <!-- 主界面 -->
+    <div id="adminApp">
+        <!-- 苹果风格窗口容器 -->
+        <div class="apple-window">
+            <!-- 窗口标题栏 -->
+            <div class="apple-titlebar">
+                <div class="window-controls">
+                    <div class="control-btn close"></div>
+                    <div class="control-btn minimize"></div>
+                    <div class="control-btn maximize"></div>
+                </div>
+                <div class="window-title">
+                    <span class="title-icon">📊</span>
+                    <span>微信文件传输助手 - 管理后台</span>
+                </div>
+                <div class="window-actions">
+                    <div class="window-action-btn">
+                        <span>🏠</span>
+                        <span>前台</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 管理后台应用主体 -->
+            <div class="admin-app">
+                <!-- 顶部导航栏 -->
+                <header class="admin-header">
+                    <div class="header-left">
+                        <div class="logo-container">
+                            <div class="logo-icon">📊</div>
+                            <div class="logo-text">
+                                <h1>微信文件传输助手</h1>
+                                <span class="logo-subtitle">管理后台</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-center">
+                        <div class="header-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">👥</span>
+                                <span class="stat-value">123</span>
+                                <span class="stat-label">用户</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">💬</span>
+                                <span class="stat-value">456</span>
+                                <span class="stat-label">消息</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📁</span>
+                                <span class="stat-value">789</span>
+                                <span class="stat-label">文件</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <div class="header-actions">
+                            <button class="header-btn" title="刷新数据">
+                                <span class="btn-icon">🔄</span>
+                            </button>
+                            <button class="header-btn" title="设置">
+                                <span class="btn-icon">⚙️</span>
+                            </button>
+                            <div class="user-menu">
+                                <div class="user-info">
+                                    <div class="user-avatar">👤</div>
+                                    <div class="user-details">
+                                        <span class="user-name">管理员</span>
+                                        <span class="user-role">Administrator</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline">
+                                    <span class="btn-icon">🚪</span>
+                                    退出登录
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="admin-container">
+                    <!-- 侧边栏 -->
+                    <aside class="admin-sidebar">
+                        <nav class="sidebar-nav">
+                            <div class="nav-section">
+                                <div class="nav-section-title">
+                                    <span class="section-icon">🏠</span>
+                                    <span>主要功能</span>
+                                </div>
+                                <ul>
+                                    <li class="nav-item active">
+                                        <a href="#dashboard">
+                                            <i class="icon">📊</i>
+                                            <span>仪表板</span>
+                                            <div class="nav-indicator"></div>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#messages">
+                                            <i class="icon">💬</i>
+                                            <span>信息管理</span>
+                                            <div class="nav-badge">5</div>
+                                            <div class="nav-indicator"></div>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#files">
+                                            <i class="icon">📁</i>
+                                            <span>文件管理</span>
+                                            <div class="nav-badge">12</div>
+                                            <div class="nav-indicator"></div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="nav-section">
+                                <div class="nav-section-title">
+                                    <span class="section-icon">⚙️</span>
+                                    <span>系统管理</span>
+                                </div>
+                                <ul>
+                                    <li class="nav-item">
+                                        <a href="#users">
+                                            <i class="icon">👥</i>
+                                            <span>用户管理</span>
+                                            <div class="nav-badge">3</div>
+                                            <div class="nav-indicator"></div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="nav-footer">
+                                <div class="system-status">
+                                    <div class="status-indicator online"></div>
+                                    <span>系统运行正常</span>
+                                </div>
+                                <div class="version-info">
+                                    <span>版本 v2.2.0</span>
+                                </div>
+                            </div>
+                        </nav>
+                    </aside>
+
+                    <!-- 主内容区 -->
+                    <main class="admin-main">
+                        <div class="page active">
+                            <div class="page-header">
+                                <h2>仪表板</h2>
+                                <p>系统概览和统计信息</p>
+                            </div>
+
+                            <!-- 统计卡片 -->
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon">👥</div>
+                                    <div class="stat-content">
+                                        <h3>123</h3>
+                                        <p>总用户数</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">💬</div>
+                                    <div class="stat-content">
+                                        <h3>456</h3>
+                                        <p>总消息数</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">📁</div>
+                                    <div class="stat-content">
+                                        <h3>789</h3>
+                                        <p>总文件数</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">💾</div>
+                                    <div class="stat-content">
+                                        <h3>2.5 GB</h3>
+                                        <p>存储使用</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 示例表格 -->
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>用户名</th>
+                                            <th>注册时间</th>
+                                            <th>最后登录</th>
+                                            <th>状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>张三</td>
+                                            <td>2024-01-15 10:30</td>
+                                            <td>2024-01-20 14:25</td>
+                                            <td><span class="status-badge status-active">活跃</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>李四</td>
+                                            <td>2024-01-16 09:15</td>
+                                            <td>2024-01-19 16:40</td>
+                                            <td><span class="status-badge status-active">活跃</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>王五</td>
+                                            <td>2024-01-17 11:20</td>
+                                            <td>从未登录</td>
+                                            <td><span class="status-badge status-inactive">未激活</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 动态背景脚本 -->
+    <script src="js/admin-dynamic-background.js?v=1"></script>
+    
+    <script>
+        // 简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航项点击效果
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 统计卡片悬停效果
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

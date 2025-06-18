@@ -13,16 +13,24 @@ const Dashboard = {
             const result = await AdminAPI.dashboard.getData();
             
             if (result && result.success) {
-                this.updateStats(result.data.totalStats);
-                this.updateTodayStats(result.data.todayStats);
-                this.createActivityChart(result.data.weeklyActivity);
-                this.createFileTypeChart(result.data.fileTypes);
-                this.updateRecentUsers(result.data.recentUsers);
-                this.updateStorageInfo(result.data.storage);
+                this.updateStats(result.data.totalStats || {});
+                this.updateTodayStats(result.data.todayStats || {});
+                this.createActivityChart(result.data.weeklyActivity || []);
+                this.createFileTypeChart(result.data.fileTypes || []);
+                this.updateRecentUsers(result.data.recentUsers || []);
+                this.updateStorageInfo(result.data.storage || {});
+                
+                // 更新头部统计
+                this.updateHeaderStats(result.data.totalStats || {});
+            } else {
+                console.error('仪表板数据获取失败:', result?.error || '未知错误');
+                Auth.showNotification(result?.error || '加载数据失败', 'error');
+                this.showEmptyState();
             }
         } catch (error) {
             console.error('加载仪表板数据失败:', error);
-            Auth.showNotification('加载数据失败', 'error');
+            Auth.showNotification('网络错误，请检查连接', 'error');
+            this.showEmptyState();
         }
     },
 
@@ -219,6 +227,37 @@ const Dashboard = {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    },
+
+    // 更新头部统计
+    updateHeaderStats(stats) {
+        const headerUserCount = document.getElementById('headerUserCount');
+        const headerMessageCount = document.getElementById('headerMessageCount');
+        const headerFileCount = document.getElementById('headerFileCount');
+        
+        if (headerUserCount) headerUserCount.textContent = stats.users || 0;
+        if (headerMessageCount) headerMessageCount.textContent = stats.messages || 0;
+        if (headerFileCount) headerFileCount.textContent = stats.files || 0;
+    },
+
+    // 显示空状态
+    showEmptyState() {
+        // 重置所有统计为0
+        this.updateStats({ users: 0, messages: 0, files: 0, fileSize: 0 });
+        this.updateHeaderStats({ users: 0, messages: 0, files: 0 });
+        
+        // 清空图表
+        if (this.charts.activity) {
+            this.charts.activity.destroy();
+            this.charts.activity = null;
+        }
+        if (this.charts.fileType) {
+            this.charts.fileType.destroy();
+            this.charts.fileType = null;
+        }
+        
+        // 显示空的用户列表
+        this.updateRecentUsers([]);
     },
 
     // 刷新数据
